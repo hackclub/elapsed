@@ -87,8 +87,7 @@
 		</ItemGroup>
 		<Copy
 			SourceFiles="@(WASMBinary)"
-			DestinationFolder="$(CIOutputDirectory)%(RecursiveDir)"
-			SkipUnchangedFiles="true" />
+			DestinationFolder="$(CIOutputDirectory)%(RecursiveDir)" />
 	</Target>
 
 	<ItemGroup>

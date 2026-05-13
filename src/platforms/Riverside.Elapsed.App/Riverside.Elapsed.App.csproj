@@ -37,7 +37,7 @@
 		<ProjectReference Include="$(SharedDirectory)\Riverside.Elapsed\Riverside.Elapsed.csproj" />
 	</ItemGroup>
 
-	<Target Name="GenerateBuildInfo" BeforeTargets="CoreCompile">
+	<Target Name="GenerateBuildInfo" BeforeTargets="MarkupCompilePass1;XamlPreCompile;CoreCompile">
 		<PropertyGroup>
 			<GeneratedBuildInfoFile>$(IntermediateOutputPath)Generated\BuildInfo.g.cs</GeneratedBuildInfoFile>
 		</PropertyGroup>

@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
-public class DraftEdit
+public sealed class DraftEdit
 {
-	public double BeginSeconds;
-	public double EndSeconds;
-	public EditKind Kind;
+	public double BeginSeconds { get; set; }
+	public double EndSeconds { get; set; }
+	public EditKind Kind { get; set; }
 }

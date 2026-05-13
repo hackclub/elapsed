@@ -2,13 +2,13 @@ namespace Riverside.Elapsed.App.Models.Admin;
 
 public sealed class ProgramKeyMetadata
 {
-	public Guid KeyId;
-	public string Name;
-	public string KeyPrefix;
-	public IReadOnlyList<string> Scopes;
-	public User.UserSummary CreatedBy;
-	public DateTimeOffset CreatedAt;
-	public DateTimeOffset? LastUsedAt;
-	public DateTimeOffset? RevokedAt;
-	public DateTimeOffset ExpiresAt;
+	public Guid KeyId { get; set; }
+	public string Name { get; set; } = string.Empty;
+	public string KeyPrefix { get; set; } = string.Empty;
+	public IReadOnlyList<string> Scopes { get; set; } = Array.Empty<string>();
+	public User.UserSummary CreatedBy { get; set; } = new();
+	public DateTimeOffset CreatedAt { get; set; }
+	public DateTimeOffset? LastUsedAt { get; set; }
+	public DateTimeOffset? RevokedAt { get; set; }
+	public DateTimeOffset ExpiresAt { get; set; }
 }

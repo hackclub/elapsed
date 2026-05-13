@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
-public class Comment
+public sealed class Comment
 {
-	public string CommentId;
-	public string Content;
-	public User.User Author;
-	public DateTimeOffset CreatedAt;
+	public string CommentId { get; set; } = string.Empty;
+	public string Content { get; set; } = string.Empty;
+	public User.User Author { get; set; } = new();
+	public DateTimeOffset CreatedAt { get; set; }
 }

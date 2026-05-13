@@ -1,7 +1,7 @@
 namespace Riverside.Elapsed.App.Models.User.Local;
 
-public class KeyRelayResult
+public sealed class KeyRelayResult
 {
-	public Guid DeviceId;
-	public byte[] DeviceKey;
+	public Guid DeviceId { get; set; }
+	public byte[] DeviceKey { get; set; } = Array.Empty<byte>();
 }

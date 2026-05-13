@@ -2,5 +2,5 @@ namespace Riverside.Elapsed.App.Models.Admin;
 
 public sealed class AdminSearchResults
 {
-	public IReadOnlyList<AdminSearchResult> Results;
+	public IReadOnlyList<AdminSearchResult> Results { get; set; } = Array.Empty<AdminSearchResult>();
 }

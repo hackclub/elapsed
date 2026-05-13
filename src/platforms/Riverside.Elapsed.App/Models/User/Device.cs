@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Riverside.Elapsed.App.Models.User;
 
-public class Device
+public sealed class Device
 {
-	public Guid DeviceId;
-	public string Name;
+	public Guid DeviceId { get; set; }
+	public string Name { get; set; } = string.Empty;
 }

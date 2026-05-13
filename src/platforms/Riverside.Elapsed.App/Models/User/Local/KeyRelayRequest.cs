@@ -1,7 +1,7 @@
 namespace Riverside.Elapsed.App.Models.User.Local;
 
-public class KeyRelayRequest
+public sealed class KeyRelayRequest
 {
-	public Guid ExchangeId;
-	public Guid CallingDeviceId;
+	public Guid ExchangeId { get; set; }
+	public Guid CallingDeviceId { get; set; }
 }

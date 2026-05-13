@@ -1,17 +1,17 @@
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
-public class Timelapse
+public sealed class Timelapse
 {
-	public string TimelapseId;
-	public string Name;
-	public string Description;
-	public Visibility Visibility;
-	public DateTimeOffset CreatedAt;
-	public User.User Owner;
-	public IReadOnlyList<Comment> Comments;
-	public Uri? PlaybackUrl;
-	public Uri? ThumbnailUrl;
-	public double DurationSeconds;
-	public string? HackatimeProject;
-	public string? SourceDraftId;
+	public string TimelapseId { get; set; } = string.Empty;
+	public string Name { get; set; } = string.Empty;
+	public string Description { get; set; } = string.Empty;
+	public Visibility Visibility { get; set; }
+	public DateTimeOffset CreatedAt { get; set; }
+	public User.User Owner { get; set; } = new();
+	public IReadOnlyList<Comment> Comments { get; set; } = Array.Empty<Comment>();
+	public Uri? PlaybackUrl { get; set; }
+	public Uri? ThumbnailUrl { get; set; }
+	public double DurationSeconds { get; set; }
+	public string? HackatimeProject { get; set; }
+	public string? SourceDraftId { get; set; }
 }

@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Riverside.Elapsed.App.Models.Admin;
 
-public class AdminStats
+public sealed class AdminStats
 {
-	public double TotalLoggedSeconds;
-	public long TotalProjects;
-	public long TotalUsers;
+	public double TotalLoggedSeconds { get; set; }
+	public long TotalProjects { get; set; }
+	public long TotalUsers { get; set; }
 }

@@ -15,7 +15,8 @@ namespace Riverside.Elapsed.App.Services.Auth;
 
 public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthService
 {
-	private const string DesktopRedirectUri = "http://localhost:8765/auth/callback";
+	private const string DesktopRedirectUri = "http://localhost:38080/auth/callback";
+	private const string DesktopListenerPrefix = "http://localhost:38080/";
 #if __WASM__
 	private const string PendingAuthStorageKey = "elapsed.auth.pending";
 #endif
@@ -79,7 +80,7 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 		}
 
 		using var listener = new HttpListener();
-		listener.Prefixes.Add("http://localhost:8765/");
+		listener.Prefixes.Add(DesktopListenerPrefix);
 		listener.Start();
 
 		try
@@ -143,7 +144,14 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 			return ApiResult<OAuthToken>.Failure("Token exchange failed: no access token returned by the server.");
 		}
 
-		var scope = response.Scope is UntypedString scopeString ? scopeString.Value : Riverside.Elapsed.Constants.OAuthScopes;
+		var scope = string.IsNullOrWhiteSpace(response.Scope)
+			? Riverside.Elapsed.Constants.OAuthScopes
+			: response.Scope;
+		var tokenType = response.TokenType switch
+		{
+			UntypedString untyped => string.IsNullOrWhiteSpace(untyped.GetValue()) ? "bearer" : untyped.GetValue()!,
+			_ => "bearer",
+		};
 
 		return ApiResult<OAuthToken>.Success(new OAuthToken
 		{
@@ -151,7 +159,7 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 			RefreshToken = response.RefreshToken,
 			ExpiresIn = response.ExpiresIn ?? 0,
 			Scope = scope,
-			TokenType = response.TokenType ?? "bearer",
+			TokenType = tokenType,
 		});
 	}
 
@@ -226,7 +234,13 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 				return true;
 			}
 		}
-		catch
+		catch (InvalidOperationException)
+		{
+		}
+		catch (PlatformNotSupportedException)
+		{
+		}
+		catch (System.ComponentModel.Win32Exception)
 		{
 		}
 

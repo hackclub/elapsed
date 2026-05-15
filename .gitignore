@@ -8,6 +8,7 @@
 .idea/
 .vercel
 Riverside.Elapsed.json
+*.lscache
 
 # User-specific files
 *.rsuser

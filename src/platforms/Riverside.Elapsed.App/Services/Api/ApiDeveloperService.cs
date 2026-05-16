@@ -141,9 +141,9 @@ public sealed class ApiDeveloperService(IApiClientFacade client, IApiUserService
 		return ApiResult<bool>.Failure(error);
 	}
 
-	public Task<Riverside.Elapsed.App.Models.User.User?> HydrateCreatedByAsync(Riverside.Elapsed.App.Models.User.UserSummary? createdBy, CancellationToken cancellationToken = default)
+	public Task<Riverside.Elapsed.App.Models.User.User?> HydrateCreatedByAsync(Riverside.Elapsed.App.Models.User.User? createdBy, CancellationToken cancellationToken = default)
 		=> userService.HydrateUserAsync(createdBy, cancellationToken);
 
-	private Riverside.Elapsed.App.Models.User.User? ResolveCreatedBy(Riverside.Elapsed.App.Models.User.UserSummary? summary)
-		=> summary is null ? null : ApiMappingExtensions.MapUser(summary);
+	private Riverside.Elapsed.App.Models.User.User? ResolveCreatedBy(Riverside.Elapsed.App.Models.User.User? user)
+		=> user;
 }

@@ -37,6 +37,22 @@
 		<ProjectReference Include="$(SharedDirectory)\Riverside.Elapsed\Riverside.Elapsed.csproj" />
 	</ItemGroup>
 
+	<!--
+		Riverside.MediaRecording uses Windows-only CsWin32 P/Invoke. We reference it only on
+		the desktop and windows10 head builds; other platforms get the no-op recording facade.
+	-->
+	<ItemGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">
+		<ProjectReference Include="$(MSBuildThisFileDirectory)..\..\core\Riverside.MediaRecording\Riverside.MediaRecording.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">
+		<DefineConstants>$(DefineConstants);HAS_MEDIA_RECORDING</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">
+		<WindowsPackageType>MSIX</WindowsPackageType>
+	</PropertyGroup>
+
 	<Target Name="GenerateBuildInfo" BeforeTargets="MarkupCompilePass1;XamlPreCompile;CoreCompile">
 		<PropertyGroup>
 			<GeneratedBuildInfoFile>$(IntermediateOutputPath)Generated\BuildInfo.g.cs</GeneratedBuildInfoFile>

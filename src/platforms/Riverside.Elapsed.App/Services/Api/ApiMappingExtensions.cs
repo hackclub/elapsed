@@ -140,85 +140,85 @@ public static class ApiMappingExtensions
 		};
 	}
 
-	public static UserSummary MapUserSummary(GetAllOwnedAppsPostResponseMember1_data_apps_createdByMember1 createdBy)
+	public static AppUser MapUser(GetAllOwnedAppsPostResponseMember1_data_apps_createdByMember1 createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(GetAllAppsPostResponseMember1_data_apps_createdByMember1 createdBy)
+	public static AppUser MapUser(GetAllAppsPostResponseMember1_data_apps_createdByMember1 createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(CreateAppPostResponseMember1_data_app_createdByMember1 createdBy)
+	public static AppUser MapUser(CreateAppPostResponseMember1_data_app_createdByMember1 createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(UpdateAppPostResponseMember1_data_app_createdByMember1 createdBy)
+	public static AppUser MapUser(UpdateAppPostResponseMember1_data_app_createdByMember1 createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(ListPostResponseMember1_data_keys_createdBy createdBy)
+	public static AppUser MapUser(ListPostResponseMember1_data_keys_createdBy createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(CreatePostResponseMember1_data_key_createdBy createdBy)
+	public static AppUser MapUser(CreatePostResponseMember1_data_key_createdBy createdBy)
 		=> new()
 		{
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = null,
+			ProfilePictureUrl = FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(WeeklyLeaderboardGetResponseMember1_data_leaderboard entry)
+	public static AppUser MapUser(WeeklyLeaderboardGetResponseMember1_data_leaderboard entry)
 		=> new()
 		{
 			UserId = entry.Id ?? string.Empty,
 			Handle = entry.Handle ?? string.Empty,
 			DisplayName = entry.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(entry.Pfp, UriKind.Absolute, out var uri) ? uri : null,
+			ProfilePictureUrl = Uri.TryCreate(entry.Pfp, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(RecentTimelapsesGetResponseMember1_data_timelapses_owner owner)
+	public static AppUser MapUser(RecentTimelapsesGetResponseMember1_data_timelapses_owner owner)
 		=> new()
 		{
 			UserId = owner.Id ?? string.Empty,
 			Handle = owner.Handle ?? string.Empty,
 			DisplayName = owner.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : null,
+			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
 		};
 
-	public static UserSummary MapUserSummary(RecentTimelapsesGetResponseMember1_data_timelapses_comments_author author)
+	public static AppUser MapUser(RecentTimelapsesGetResponseMember1_data_timelapses_comments_author author)
 		=> new()
 		{
 			UserId = author.Id ?? string.Empty,
 			Handle = author.Handle ?? string.Empty,
 			DisplayName = author.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : null,
+			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
 		};
 
 	public static LeaderboardEntry MapLeaderboardEntry(WeeklyLeaderboardGetResponseMember1_data_leaderboard entry)
@@ -292,7 +292,7 @@ public static class ApiMappingExtensions
 			SourceDraftId = timelapse.Private?.SourceDraftId?.String,
 		};
 
-	public static DeveloperApp MapDeveloperApp(GetAllOwnedAppsPostResponseMember1_data_apps app, Func<UserSummary?, AppUser?> createdByResolver)
+	public static DeveloperApp MapDeveloperApp(GetAllOwnedAppsPostResponseMember1_data_apps app, Func<AppUser?, AppUser?> createdByResolver)
 		=> new()
 		{
 			AppId = app.Id ?? Guid.Empty,
@@ -309,10 +309,10 @@ public static class ApiMappingExtensions
 				: DateTimeOffset.MinValue,
 			CreatedBy = createdByResolver(app.CreatedBy?.GetAllOwnedAppsPostResponseMember1DataAppsCreatedByMember1 is null
 				? null
-				: MapUserSummary(app.CreatedBy.GetAllOwnedAppsPostResponseMember1DataAppsCreatedByMember1)),
+				: MapUser(app.CreatedBy.GetAllOwnedAppsPostResponseMember1DataAppsCreatedByMember1)),
 		};
 
-	public static DeveloperApp MapDeveloperApp(GetAllAppsPostResponseMember1_data_apps app, Func<UserSummary?, AppUser?> createdByResolver)
+	public static DeveloperApp MapDeveloperApp(GetAllAppsPostResponseMember1_data_apps app, Func<AppUser?, AppUser?> createdByResolver)
 		=> new()
 		{
 			AppId = app.Id ?? Guid.Empty,
@@ -329,10 +329,10 @@ public static class ApiMappingExtensions
 				: DateTimeOffset.MinValue,
 			CreatedBy = createdByResolver(app.CreatedBy?.GetAllAppsPostResponseMember1DataAppsCreatedByMember1 is null
 				? null
-				: MapUserSummary(app.CreatedBy.GetAllAppsPostResponseMember1DataAppsCreatedByMember1)),
+				: MapUser(app.CreatedBy.GetAllAppsPostResponseMember1DataAppsCreatedByMember1)),
 		};
 
-	public static DeveloperApp MapDeveloperApp(CreateAppPostResponseMember1_data_app app, Func<UserSummary?, AppUser?> createdByResolver)
+	public static DeveloperApp MapDeveloperApp(CreateAppPostResponseMember1_data_app app, Func<AppUser?, AppUser?> createdByResolver)
 		=> new()
 		{
 			AppId = app.Id ?? Guid.Empty,
@@ -349,10 +349,10 @@ public static class ApiMappingExtensions
 				: DateTimeOffset.MinValue,
 			CreatedBy = createdByResolver(app.CreatedBy?.CreateAppPostResponseMember1DataAppCreatedByMember1 is null
 				? null
-				: MapUserSummary(app.CreatedBy.CreateAppPostResponseMember1DataAppCreatedByMember1)),
+				: MapUser(app.CreatedBy.CreateAppPostResponseMember1DataAppCreatedByMember1)),
 		};
 
-	public static DeveloperApp MapDeveloperApp(UpdateAppPostResponseMember1_data_app app, Func<UserSummary?, AppUser?> createdByResolver)
+	public static DeveloperApp MapDeveloperApp(UpdateAppPostResponseMember1_data_app app, Func<AppUser?, AppUser?> createdByResolver)
 		=> new()
 		{
 			AppId = app.Id ?? Guid.Empty,
@@ -369,17 +369,17 @@ public static class ApiMappingExtensions
 				: DateTimeOffset.MinValue,
 			CreatedBy = createdByResolver(app.CreatedBy?.UpdateAppPostResponseMember1DataAppCreatedByMember1 is null
 				? null
-				: MapUserSummary(app.CreatedBy.UpdateAppPostResponseMember1DataAppCreatedByMember1)),
+				: MapUser(app.CreatedBy.UpdateAppPostResponseMember1DataAppCreatedByMember1)),
 		};
 
-	public static ProgramKeyMetadata MapProgramKey(ListPostResponseMember1_data_keys key, Func<UserSummary?, UserSummary> createdByResolver)
+	public static ProgramKeyMetadata MapProgramKey(ListPostResponseMember1_data_keys key, Func<AppUser?, AppUser> createdByResolver)
 		=> new()
 		{
 			KeyId = key.Id ?? Guid.Empty,
 			Name = key.Name ?? string.Empty,
 			KeyPrefix = key.KeyPrefix ?? string.Empty,
 			Scopes = key.Scopes?.ToArray() ?? Array.Empty<string>(),
-			CreatedBy = createdByResolver(MapUserSummary(key.CreatedBy)),
+			CreatedBy = createdByResolver(key.CreatedBy is null ? null : MapUser(key.CreatedBy)),
 			CreatedAt = DateTimeOffset.TryParse(key.CreatedAt, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var createdAt)
 				? createdAt
 				: DateTimeOffset.MinValue,
@@ -429,19 +429,6 @@ public static class ApiMappingExtensions
 			SlackId = details.SlackId,
 		};
 
-	public static AppUser MapUser(UserSummary summary)
-		=> new()
-		{
-			UserId = summary.UserId,
-			Handle = summary.Handle,
-			DisplayName = summary.DisplayName,
-			ProfilePictureUrl = summary.ProfilePictureUrl ?? FallbackProfileUri,
-			Bio = string.Empty,
-			Urls = Array.Empty<Uri>(),
-			HackatimeId = null,
-			SlackId = null,
-		};
-
 	public static OAuthGrant MapOAuthGrant(GetOwnedOAuthGrantsPostResponseMember1_data_grants grant)
 		=> new()
 		{
@@ -465,7 +452,7 @@ public static class ApiMappingExtensions
 			DisplayText = result.DisplayText ?? string.Empty,
 		};
 
-	public static AdminStatsSummary MapAdminStats(StatsGetResponseMember1_data data)
+	public static AdminStats MapAdminStats(StatsGetResponseMember1_data data)
 		=> new()
 		{
 			TotalLoggedSeconds = data.TotalLoggedSeconds ?? 0,
@@ -496,14 +483,14 @@ public static class ApiMappingExtensions
 			Data = data.Data ?? new object(),
 		};
 
-	public static ProgramKeyMetadata MapProgramKey(CreatePostResponseMember1_data_key key, Func<UserSummary?, UserSummary> createdByResolver)
+	public static ProgramKeyMetadata MapProgramKey(CreatePostResponseMember1_data_key key, Func<AppUser?, AppUser> createdByResolver)
 		=> new()
 		{
 			KeyId = key.Id ?? Guid.Empty,
 			Name = key.Name ?? string.Empty,
 			KeyPrefix = key.KeyPrefix ?? string.Empty,
 			Scopes = key.Scopes?.ToArray() ?? Array.Empty<string>(),
-			CreatedBy = createdByResolver(MapUserSummary(key.CreatedBy)),
+			CreatedBy = createdByResolver(key.CreatedBy is null ? null : MapUser(key.CreatedBy)),
 			CreatedAt = DateTimeOffset.TryParse(key.CreatedAt, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var createdAt)
 				? createdAt
 				: DateTimeOffset.MinValue,

@@ -30,39 +30,23 @@ public class User
 		};
 	}
 
-	public static User FromSummary(UserSummary summary)
-	{
-		ArgumentNullException.ThrowIfNull(summary);
-
-		return new User
-		{
-			UserId = summary.UserId,
-			Handle = summary.Handle,
-			DisplayName = summary.DisplayName,
-			ProfilePictureUrl = summary.ProfilePictureUrl ?? new Uri("https://example.com", UriKind.Absolute),
-			Bio = string.Empty,
-			Urls = Array.Empty<Uri>(),
-		};
-	}
-
 	/// <summary>
-	/// Creates a fully projected user from a summary by querying the API for missing details.
+	/// hydrates a partially-populated user by querying the api for the full projection,
+	/// falling back to the supplied user when the api lookup fails.
 	/// </summary>
 	public static async Task<User?> CreateHydratedAsync(
-		UserSummary? summary,
+		User? user,
 		Func<string, CancellationToken, Task<UserDetails?>> hydrateByIdAsync,
 		CancellationToken cancellationToken = default)
 	{
 		ArgumentNullException.ThrowIfNull(hydrateByIdAsync);
 
-		if (summary is null || string.IsNullOrWhiteSpace(summary.UserId))
+		if (user is null || string.IsNullOrWhiteSpace(user.UserId))
 		{
 			return null;
 		}
 
-		var details = await hydrateByIdAsync(summary.UserId, cancellationToken);
-		return details is not null
-			? FromDetails(details)
-			: FromSummary(summary);
+		var details = await hydrateByIdAsync(user.UserId, cancellationToken);
+		return details is not null ? FromDetails(details) : user;
 	}
 }

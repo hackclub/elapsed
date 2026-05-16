@@ -20,5 +20,5 @@ public interface IApiUserService
 	Task<ApiResult<bool>> DenyKeyRelayAsync(Guid exchangeId, CancellationToken cancellationToken = default);
 	Task<ApiResult<bool>> EmitHeartbeatAsync(CancellationToken cancellationToken = default);
 	Task<ApiResult<bool>> SignOutAsync(CancellationToken cancellationToken = default);
-	Task<Riverside.Elapsed.App.Models.User.User?> HydrateUserAsync(UserSummary? summary, CancellationToken cancellationToken = default);
+	Task<Riverside.Elapsed.App.Models.User.User?> HydrateUserAsync(Riverside.Elapsed.App.Models.User.User? user, CancellationToken cancellationToken = default);
 }

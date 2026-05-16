@@ -1,8 +1,8 @@
 namespace Riverside.Elapsed.App.Views;
 
-public sealed partial class LoginPage : Page
+public sealed partial class UserProfilePage : Page
 {
-	public LoginPage()
+	public UserProfilePage()
 	{
 		this.InitializeComponent();
 	}

@@ -1,4 +1,4 @@
-namespace Riverside.Elapsed.App.Presentation;
+namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class Shell : UserControl, IContentControlProvider
 {
@@ -6,5 +6,6 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 	{
 		this.InitializeComponent();
 	}
+
 	public ContentControl ContentControl => Splash;
 }

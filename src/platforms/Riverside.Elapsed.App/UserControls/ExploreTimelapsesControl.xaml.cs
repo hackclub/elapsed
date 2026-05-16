@@ -1,4 +1,4 @@
-namespace Riverside.Elapsed.App.Presentation.Controls;
+namespace Riverside.Elapsed.App.UserControls;
 
 public sealed partial class ExploreTimelapsesControl : UserControl
 {

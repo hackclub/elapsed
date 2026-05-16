@@ -1,4 +1,4 @@
-namespace Riverside.Elapsed.App.Presentation;
+namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class VideoPage : Page
 {

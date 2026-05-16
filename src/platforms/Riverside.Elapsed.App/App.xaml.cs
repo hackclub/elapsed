@@ -19,6 +19,11 @@ public partial class App : Application
 	protected Window? MainWindow { get; private set; }
 	protected IHost? Host { get; private set; }
 
+	// shell.xaml.cs reaches for this when wiring the custom title bar so it can call
+	// Window.SetTitleBar(...) without having to plumb the window reference through
+	// navigation. browser builds skip the call entirely.
+	internal static Window? CurrentMainWindow { get; private set; }
+
 	[SuppressMessage("Trimming", "IL2026", Justification = "Uno app builder usage is trim-safe for configured features.")]
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
 	{
@@ -35,11 +40,9 @@ public partial class App : Application
 						.CoreLogLevel(LogLevel.Warning);
 				}, enableUnoLogging: true)
 				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
-				.UseConfiguration(configBuilder =>
-				{
-					configBuilder.Sources.EmbeddedSource<App>();
-					configBuilder.Sources.Section<AppConfig>();
-				})
+				.UseConfiguration(configure: (Uno.Extensions.Configuration.IConfigBuilder configBuilder) => configBuilder
+					.EmbeddedSource<App>()
+					.Section<AppConfig>())
 				.UseLocalization()
 				.ConfigureServices((context, services) =>
 				{
@@ -50,6 +53,15 @@ public partial class App : Application
 					services.AddSingleton<IAuthTokenStore, AuthTokenStore>();
 					services.AddSingleton<ILapseAuthService, LapseAuthService>();
 					services.AddSingleton<IBuildInfoProvider, BuildInfoProvider>();
+
+#if HAS_MEDIA_RECORDING
+					services.AddSingleton<Riverside.Elapsed.App.Services.Recording.IRecordingFacade>(_ =>
+						OperatingSystem.IsWindows()
+							? new Riverside.Elapsed.App.Services.Recording.WindowsRecordingFacade()
+							: new Riverside.Elapsed.App.Services.Recording.NoOpRecordingFacade());
+#else
+					services.AddSingleton<Riverside.Elapsed.App.Services.Recording.IRecordingFacade, Riverside.Elapsed.App.Services.Recording.NoOpRecordingFacade>();
+#endif
 
 					services.AddScoped<IApiClientFacade, ApiClientFacade>();
 					services.AddScoped<IApiUserService, ApiUserService>();
@@ -63,6 +75,8 @@ public partial class App : Application
 			);
 
 		MainWindow = builder.Window;
+		CurrentMainWindow = MainWindow;
+
 #if DEBUG
 		MainWindow.UseStudio();
 #endif
@@ -70,26 +84,23 @@ public partial class App : Application
 
 		Host = await builder.NavigateAsync<Shell>(initialNavigate: async (services, navigator) =>
 		{
+			// always open the main page. the main page shows a welcome banner for signed-out users;
+			// the login page is a secondary screen reached via the sign-in button.
 			var authService = services.GetRequiredService<ILapseAuthService>();
-			var isAuthenticated = await authService.TryRestoreSessionAsync();
-			if (isAuthenticated)
-			{
-				await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
-				return;
-			}
-
-			await navigator.NavigateViewModelAsync<LoginViewModel>(this, qualifier: Qualifiers.Nested);
+			await authService.TryRestoreSessionAsync();
+			await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
 		});
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 		views.Register(
-			new ViewMap(ViewModel: typeof(ShellViewModel)),
+				new ViewMap<Shell, ShellViewModel>(),
 			new ViewMap<LoginPage, LoginViewModel>(),
 			new ViewMap<MainPage, MainViewModel>(),
 			new ViewMap<VideoPage, VideoViewModel>(),
-			new ViewMap<RecordingPage, RecordingViewModel>()
+			new ViewMap<RecordingPage, RecordingViewModel>(),
+			new ViewMap<UserProfilePage, UserProfileViewModel>()
 		);
 
 		routes.Register(
@@ -102,6 +113,7 @@ public partial class App : Application
 					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(), IsDefault: true),
 					new RouteMap("Video", View: views.FindByViewModel<VideoViewModel>()),
 					new RouteMap("Recording", View: views.FindByViewModel<RecordingViewModel>()),
+					new RouteMap("UserProfile", View: views.FindByViewModel<UserProfileViewModel>()),
 				]
 			)
 		);

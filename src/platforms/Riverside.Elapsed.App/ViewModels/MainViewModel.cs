@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
-using Riverside.Elapsed.App.Models.Global;
-using Riverside.Elapsed.App.Models.Timelapses;
 using Riverside.Elapsed.App.Services.Api;
 using Riverside.Elapsed.App.Services.Auth;
 using Riverside.Elapsed.App.Services.Build;
 
 namespace Riverside.Elapsed.App.ViewModels;
 
+/// <summary>
+/// Backs the home page — leaderboard, explore timelapses, and the welcome banner shown to
+/// signed-out viewers.
+/// </summary>
 public partial class MainViewModel : ObservableObject
 {
 	private readonly INavigator _navigator;
@@ -23,6 +25,9 @@ public partial class MainViewModel : ObservableObject
 	[ObservableProperty]
 	private string _searchText = string.Empty;
 
+	[ObservableProperty]
+	private bool _isAuthenticated;
+
 	public MainViewModel(
 		INavigator navigator,
 		ILapseAuthService authService,
@@ -34,19 +39,21 @@ public partial class MainViewModel : ObservableObject
 		_globalService = globalService;
 		_buildInfo = buildInfoProvider.GetBuildInfo();
 
+		IsAuthenticated = _authService.IsAuthenticated;
+		_authService.LoggedIn += (_, _) => IsAuthenticated = true;
+		_authService.LoggedOut += (_, _) => IsAuthenticated = false;
+
 		RefreshCommand = new AsyncRelayCommand(LoadAsync);
 		LogoutCommand = new AsyncRelayCommand(LogoutAsync);
 		OpenRecordingCommand = new AsyncRelayCommand(() => _navigator.NavigateViewModelAsync<RecordingViewModel>(this));
 		OpenTimelapseCommand = new AsyncRelayCommand<TimelapseCardViewModel>(OpenTimelapseAsync);
+		OpenProfileCommand = new AsyncRelayCommand<LeaderboardEntryViewModel>(OpenProfileAsync);
+		SignInCommand = new AsyncRelayCommand(SignInAsync);
 	}
 
 	public ObservableCollection<LeaderboardEntryViewModel> LeaderboardEntries { get; } = [];
 
 	public ObservableCollection<TimelapseCardViewModel> ExploreTimelapses { get; } = [];
-
-	public string SearchPlaceholder => "Search";
-
-	public bool IsSearchEnabled => false;
 
 	public bool IsWebPlatform => OperatingSystem.IsBrowser();
 
@@ -65,6 +72,10 @@ public partial class MainViewModel : ObservableObject
 	public IAsyncRelayCommand OpenRecordingCommand { get; }
 
 	public IAsyncRelayCommand<TimelapseCardViewModel> OpenTimelapseCommand { get; }
+
+	public IAsyncRelayCommand<LeaderboardEntryViewModel> OpenProfileCommand { get; }
+
+	public IAsyncRelayCommand SignInCommand { get; }
 
 	public async Task InitializeAsync()
 	{
@@ -129,60 +140,21 @@ public partial class MainViewModel : ObservableObject
 			return;
 		}
 
-		await _navigator.NavigateViewModelAsync<VideoViewModel>(this);
+		await _navigator.NavigateViewModelAsync<VideoViewModel>(this, data: card);
 	}
 
-	public sealed class LeaderboardEntryViewModel
+	private async Task OpenProfileAsync(LeaderboardEntryViewModel? entry)
 	{
-		public string Name { get; init; } = string.Empty;
-		public string Handle { get; init; } = string.Empty;
-		public string WeeklyText { get; init; } = string.Empty;
-		public Uri? ProfilePictureUrl { get; init; }
-
-		public static LeaderboardEntryViewModel FromModel(LeaderboardEntry entry)
+		if (entry is null || string.IsNullOrWhiteSpace(entry.UserId))
 		{
-			var seconds = entry.SecondsThisWeek;
-			var hours = (int)(seconds / 3600);
-			var minutes = (int)((seconds % 3600) / 60);
-			return new LeaderboardEntryViewModel
-			{
-				Name = entry.User.DisplayName,
-				Handle = string.IsNullOrWhiteSpace(entry.User.Handle) ? string.Empty : $"@{entry.User.Handle}",
-				WeeklyText = $"{hours}h {minutes}m recorded this week",
-				ProfilePictureUrl = entry.User.ProfilePictureUrl,
-			};
+			return;
 		}
+
+		await _navigator.NavigateViewModelAsync<UserProfileViewModel>(this, data: entry.UserId);
 	}
 
-	public sealed class TimelapseCardViewModel
+	private async Task SignInAsync()
 	{
-		public string TimelapseId { get; init; } = string.Empty;
-		public string Title { get; init; } = string.Empty;
-		public string OwnerText { get; init; } = string.Empty;
-		public string MetaText { get; init; } = string.Empty;
-		public Uri? ThumbnailUrl { get; init; }
-		public Uri? PlaybackUrl { get; init; }
-		public string Description { get; init; } = string.Empty;
-
-		public static TimelapseCardViewModel FromModel(Riverside.Elapsed.App.Models.Timelapses.Timelapse timelapse)
-		{
-			var age = DateTimeOffset.Now - timelapse.CreatedAt;
-			var ageText = age.TotalDays >= 1
-				? $"{(int)age.TotalDays} days ago"
-				: age.TotalHours >= 1
-					? $"{(int)age.TotalHours} hours ago"
-					: $"{Math.Max(1, (int)age.TotalMinutes)} minutes ago";
-
-			return new TimelapseCardViewModel
-			{
-				TimelapseId = timelapse.TimelapseId,
-				Title = timelapse.Name,
-				Description = timelapse.Description,
-				OwnerText = $"{timelapse.Owner.DisplayName} · @{timelapse.Owner.Handle}",
-				MetaText = ageText,
-				ThumbnailUrl = timelapse.ThumbnailUrl,
-				PlaybackUrl = timelapse.PlaybackUrl,
-			};
-		}
+		await _navigator.NavigateViewModelAsync<LoginViewModel>(this);
 	}
 }

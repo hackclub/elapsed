@@ -1,51 +1,65 @@
-﻿<Page
-	x:Class="Riverside.Elapsed.App.Presentation.MainPage"
+<Page
+	x:Class="Riverside.Elapsed.App.Views.MainPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="using:Riverside.Elapsed.App.Presentation.Controls"
+	xmlns:controls="using:Riverside.Elapsed.App.UserControls"
 	xmlns:utu="using:Uno.Toolkit.UI"
-	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	xmlns:converters="using:Riverside.Elapsed.App.Converters"
 	NavigationCacheMode="Required">
-	<Grid utu:SafeArea.Insets="VisibleBounds">
+	<Grid utu:SafeArea.Insets="VisibleBounds" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition />
+			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<Grid Margin="24,16,24,12">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+		<ScrollViewer x:Name="MainRoot" HorizontalScrollMode="Disabled" Padding="24,16,24,24">
+			<StackPanel Spacing="20">
+				<!-- welcome banner (shown only when not authenticated; mock 1/2) -->
+				<Border
+					Padding="20"
+					Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+					BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+					BorderThickness="1"
+					CornerRadius="12"
+					Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
 
-			<Image
-				Width="56"
-				Height="56"
-				Source="ms-appx:///Assets/Illustrations/orpheus-cool.png" />
+						<Image
+							Width="96"
+							Height="96"
+							VerticalAlignment="Center"
+							Source="ms-appx:///Assets/Illustrations/orpheus-cool.png" />
 
-			<StackPanel Grid.Column="1" Margin="12,0,20,0" VerticalAlignment="Center">
-				<TextBlock FontSize="30" FontWeight="SemiBold" Text="{Binding GreetingTitle}" TextWrapping="WrapWholeWords" />
-				<TextBlock Margin="0,4,0,0" Opacity="0.7" Text="{Binding GreetingSubtitle}" />
-			</StackPanel>
+						<StackPanel
+							Grid.Column="1"
+							Margin="20,0,20,0"
+							VerticalAlignment="Center"
+							Spacing="6">
+							<TextBlock
+								FontSize="26"
+								FontWeight="SemiBold"
+								Text="{Binding GreetingTitle}"
+								TextWrapping="WrapWholeWords" />
+							<TextBlock
+								FontSize="14"
+								Opacity="0.75"
+								Text="{Binding GreetingSubtitle}"
+								TextWrapping="WrapWholeWords" />
+						</StackPanel>
 
-			<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-				<Button Command="{Binding OpenRecordingCommand}" Content="New timelapse session" />
-				<Button Command="{Binding LogoutCommand}" Content="Sign out" />
-			</StackPanel>
-		</Grid>
-
-		<ScrollViewer Grid.Row="1" HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
-			<StackPanel Margin="24,0,24,8" Spacing="12">
-				<Border Padding="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
-					<TextBox
-						Width="420"
-						HorizontalAlignment="Center"
-						Header="Search"
-						IsEnabled="{Binding IsSearchEnabled}"
-						PlaceholderText="{Binding SearchPlaceholder}"
-						Text="{Binding SearchText, Mode=TwoWay}" />
+						<Button
+							Grid.Column="2"
+							VerticalAlignment="Center"
+							MinWidth="120"
+							Style="{ThemeResource AccentButtonStyle}"
+							Command="{Binding SignInCommand}"
+							Content="Sign in" />
+					</Grid>
 				</Border>
 
 				<controls:LeaderboardControl />
@@ -53,11 +67,14 @@
 			</StackPanel>
 		</ScrollViewer>
 
-		<Grid Grid.Row="2" Margin="24,0,24,12">
+		<!-- footer: compact pill on web; full credit line on desktop. -->
+		<Grid Grid.Row="1" Margin="24,0,24,12">
 			<Border
 				Padding="10,4"
 				HorizontalAlignment="Center"
 				Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+				BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+				BorderThickness="1"
 				CornerRadius="99"
 				Visibility="{Binding IsWebPlatform, Converter={StaticResource BoolToVisibilityConverter}}">
 				<TextBlock FontSize="12" Opacity="0.75" Text="{Binding WebFooterText}" />
@@ -69,6 +86,7 @@
 				FontSize="12"
 				Opacity="0.75"
 				Text="{Binding FooterText}"
+				TextAlignment="Center"
 				TextWrapping="Wrap"
 				Visibility="{Binding IsWebPlatform, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
 		</Grid>

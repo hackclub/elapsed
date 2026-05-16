@@ -15,13 +15,16 @@ namespace Riverside.Elapsed.App.Services.Auth;
 
 public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthService
 {
-	private const string DesktopRedirectUri = "http://localhost:38080/auth/callback";
-	private const string DesktopListenerPrefix = "http://localhost:38080/";
+	// match the cli's working flow exactly: the lapse server only accepts redirect_uris
+	// that have been registered against the client_id, and port 8765 is the one that works.
+	private const string DesktopRedirectUri = "http://localhost:8765/auth/callback";
+	private const string DesktopListenerPrefix = "http://localhost:8765/";
 #if __WASM__
 	private const string PendingAuthStorageKey = "elapsed.auth.pending";
 #endif
 
 	public event EventHandler? LoggedOut;
+	public event EventHandler? LoggedIn;
 
 	public bool IsAuthenticated => tokenStore.HasToken;
 
@@ -115,6 +118,7 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 
 			await tokenStore.SetTokenAsync(tokenResult.Value, cancellationToken);
 			await WriteListenerResponseAsync(response, 200, "Authentication successful. You can close this tab now.");
+			LoggedIn?.Invoke(this, EventArgs.Empty);
 			return ApiResult<bool>.Success(true);
 		}
 		catch (TimeoutException)
@@ -313,6 +317,7 @@ public sealed class LapseAuthService(IAuthTokenStore tokenStore) : ILapseAuthSer
 		await tokenStore.SetTokenAsync(tokenResult.Value, cancellationToken);
 		WebAssemblyRuntime.InvokeJS($"globalThis.localStorage.removeItem({JsonSerializer.Serialize(PendingAuthStorageKey)});");
 		WebAssemblyRuntime.InvokeJS("globalThis.history.replaceState({}, globalThis.document.title, globalThis.location.pathname);");
+		LoggedIn?.Invoke(this, EventArgs.Empty);
 		return ApiResult<bool>.Success(true);
 	}
 

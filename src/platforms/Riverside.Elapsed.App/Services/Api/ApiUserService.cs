@@ -275,16 +275,16 @@ public sealed class ApiUserService(IApiClientFacade client) : IApiUserService
 		return ApiResult<bool>.Failure(error);
 	}
 
-	public async Task<Riverside.Elapsed.App.Models.User.User?> HydrateUserAsync(UserSummary? summary, CancellationToken cancellationToken = default)
+	public async Task<Riverside.Elapsed.App.Models.User.User?> HydrateUserAsync(Riverside.Elapsed.App.Models.User.User? user, CancellationToken cancellationToken = default)
 	{
-		if (summary is null || string.IsNullOrWhiteSpace(summary.UserId))
+		if (user is null || string.IsNullOrWhiteSpace(user.UserId))
 		{
 			return null;
 		}
 
-		var query = await QueryUserAsync(id: summary.UserId, cancellationToken: cancellationToken);
+		var query = await QueryUserAsync(id: user.UserId, cancellationToken: cancellationToken);
 		return query.IsSuccess && query.Value is not null
 			? ApiMappingExtensions.MapUser(query.Value)
-			: ApiMappingExtensions.MapUser(summary);
+			: user;
 	}
 }

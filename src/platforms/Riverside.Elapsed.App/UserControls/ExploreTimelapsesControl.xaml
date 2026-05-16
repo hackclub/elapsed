@@ -4,23 +4,35 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Border
 		x:Name="ExploreRoot"
-		Padding="20"
-		Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-		BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-		BorderThickness="1"
-		CornerRadius="12">
-		<StackPanel Spacing="14">
-			<StackPanel Orientation="Horizontal" Spacing="12">
-				<Image Width="40" Height="40" Source="ms-appx:///Assets/Illustrations/orpheus-cool.png" />
-				<StackPanel VerticalAlignment="Center">
-					<TextBlock FontSize="22" FontWeight="SemiBold" Text="Timelapses being created now" />
-					<TextBlock FontSize="13" Opacity="0.7" Text="See what other Hack Clubbers are up to!" />
-				</StackPanel>
-			</StackPanel>
+		Style="{StaticResource ElapsedCard}">
+		<StackPanel Spacing="22">
 
+			<!-- header: excited-orpheus illustration + title + subtitle. -->
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Image
+					Width="60"
+					Height="60"
+					VerticalAlignment="Center"
+					Source="ms-appx:///Assets/Illustrations/orpheus-woah.png" />
+				<StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
+					<TextBlock FontSize="22" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedTextPrimary}" Text="Timelapses being created now" />
+					<TextBlock FontSize="13" Foreground="{ThemeResource ElapsedTextMuted}" Text="See what other Hack Clubbers are up to right now." />
+				</StackPanel>
+			</Grid>
+
+			<!-- responsive thumbnail grid; reflows from 1 to N columns by available width. -->
 			<ItemsRepeater ItemsSource="{Binding ExploreTimelapses}">
 				<ItemsRepeater.Layout>
-					<UniformGridLayout MinItemWidth="320" MinItemHeight="260" MinColumnSpacing="14" MinRowSpacing="14" ItemsStretch="Fill" />
+					<UniformGridLayout
+						MinItemWidth="300"
+						MinItemHeight="260"
+						MinColumnSpacing="20"
+						MinRowSpacing="20"
+						ItemsStretch="Fill" />
 				</ItemsRepeater.Layout>
 				<ItemsRepeater.ItemTemplate>
 					<DataTemplate>
@@ -28,18 +40,38 @@
 							Padding="0"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Stretch"
-							Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-							BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-							BorderThickness="1"
-							CornerRadius="10"
+							Background="Transparent"
+							BorderThickness="0"
+							CornerRadius="12"
 							Command="{Binding DataContext.OpenTimelapseCommand, ElementName=ExploreRoot}"
 							CommandParameter="{Binding}">
-							<StackPanel Spacing="6">
-								<Image Height="170" Stretch="UniformToFill" Source="{Binding ThumbnailUrl}" />
-								<StackPanel Margin="12,4,12,12" Spacing="2">
-									<TextBlock FontSize="17" FontWeight="SemiBold" Text="{Binding Title}" TextWrapping="WrapWholeWords" />
-									<TextBlock FontSize="12" Opacity="0.75" Text="{Binding OwnerText}" />
-									<TextBlock FontSize="12" Opacity="0.6" Text="{Binding MetaText}" />
+							<StackPanel Spacing="10">
+								<!-- 16:9-ish thumbnail with rounded corners. dark placeholder so the
+								     card is visually grounded before the image loads. -->
+								<Border
+									Height="170"
+									Background="{ThemeResource ElapsedThumbnailBackground}"
+									CornerRadius="{ThemeResource ElapsedRadiusThumbnail}">
+									<Image Stretch="UniformToFill" Source="{Binding ThumbnailUrl}" />
+								</Border>
+								<StackPanel Spacing="4" Margin="4,0,4,2">
+									<TextBlock
+										FontSize="15"
+										FontWeight="SemiBold"
+										Foreground="{ThemeResource ElapsedTextPrimary}"
+										Text="{Binding Title}"
+										TextTrimming="CharacterEllipsis"
+										TextWrapping="WrapWholeWords" />
+									<TextBlock
+										FontSize="12"
+										Foreground="{ThemeResource ElapsedTextSecondary}"
+										Text="{Binding OwnerText}"
+										TextTrimming="CharacterEllipsis" />
+									<TextBlock
+										FontSize="12"
+										Foreground="{ThemeResource ElapsedTextMuted}"
+										Text="{Binding MetaText}"
+										TextTrimming="CharacterEllipsis" />
 								</StackPanel>
 							</StackPanel>
 						</Button>

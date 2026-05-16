@@ -1,0 +1,180 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- design tokens. light + dark variants of every surface, stroke and text brush
+	     used by the rewritten ui. inspired by hack club's palette so the app feels
+	     at home next to the rest of hack club's web properties. -->
+	<ResourceDictionary.ThemeDictionaries>
+
+		<ResourceDictionary x:Key="Light">
+			<!-- surfaces -->
+			<SolidColorBrush x:Key="ElapsedPageBackground" Color="#F2F4F7" />
+			<SolidColorBrush x:Key="ElapsedSurface" Color="#FFFFFF" />
+			<SolidColorBrush x:Key="ElapsedSurfaceMuted" Color="#F6F7F9" />
+			<SolidColorBrush x:Key="ElapsedSurfaceElevated" Color="#FFFFFF" />
+			<!-- strokes -->
+			<SolidColorBrush x:Key="ElapsedStroke" Color="#E1E5EB" />
+			<SolidColorBrush x:Key="ElapsedStrokeStrong" Color="#C9CFD8" />
+			<SolidColorBrush x:Key="ElapsedDivider" Color="#E5E9EF" />
+			<!-- text -->
+			<SolidColorBrush x:Key="ElapsedTextPrimary" Color="#17171D" />
+			<SolidColorBrush x:Key="ElapsedTextSecondary" Color="#3C4858" />
+			<SolidColorBrush x:Key="ElapsedTextMuted" Color="#8492A6" />
+			<SolidColorBrush x:Key="ElapsedTextOnAccent" Color="#FFFFFF" />
+			<!-- accent (hack club red) -->
+			<SolidColorBrush x:Key="ElapsedAccent" Color="#EC3750" />
+			<SolidColorBrush x:Key="ElapsedAccentMuted" Color="#FDE7EA" />
+			<SolidColorBrush x:Key="ElapsedAccentHover" Color="#D62C44" />
+			<!-- semantic -->
+			<SolidColorBrush x:Key="ElapsedDanger" Color="#EC3750" />
+			<SolidColorBrush x:Key="ElapsedDangerMuted" Color="#FDE7EA" />
+			<SolidColorBrush x:Key="ElapsedSuccess" Color="#33D6A6" />
+			<!-- media placeholder -->
+			<SolidColorBrush x:Key="ElapsedThumbnailBackground" Color="#1F2D3D" />
+		</ResourceDictionary>
+
+		<ResourceDictionary x:Key="Dark">
+			<SolidColorBrush x:Key="ElapsedPageBackground" Color="#0E0E12" />
+			<SolidColorBrush x:Key="ElapsedSurface" Color="#1A1B22" />
+			<SolidColorBrush x:Key="ElapsedSurfaceMuted" Color="#15161C" />
+			<SolidColorBrush x:Key="ElapsedSurfaceElevated" Color="#22232B" />
+			<SolidColorBrush x:Key="ElapsedStroke" Color="#2A2C34" />
+			<SolidColorBrush x:Key="ElapsedStrokeStrong" Color="#3A3D47" />
+			<SolidColorBrush x:Key="ElapsedDivider" Color="#23252D" />
+			<SolidColorBrush x:Key="ElapsedTextPrimary" Color="#F9FAFC" />
+			<SolidColorBrush x:Key="ElapsedTextSecondary" Color="#C7CDD8" />
+			<SolidColorBrush x:Key="ElapsedTextMuted" Color="#8492A6" />
+			<SolidColorBrush x:Key="ElapsedTextOnAccent" Color="#FFFFFF" />
+			<SolidColorBrush x:Key="ElapsedAccent" Color="#EC3750" />
+			<SolidColorBrush x:Key="ElapsedAccentMuted" Color="#3A1820" />
+			<SolidColorBrush x:Key="ElapsedAccentHover" Color="#F25266" />
+			<SolidColorBrush x:Key="ElapsedDanger" Color="#F25266" />
+			<SolidColorBrush x:Key="ElapsedDangerMuted" Color="#3A1820" />
+			<SolidColorBrush x:Key="ElapsedSuccess" Color="#33D6A6" />
+			<SolidColorBrush x:Key="ElapsedThumbnailBackground" Color="#0A0A0E" />
+		</ResourceDictionary>
+
+		<ResourceDictionary x:Key="HighContrast">
+			<SolidColorBrush x:Key="ElapsedPageBackground" Color="{ThemeResource SystemColorWindowColor}" />
+			<SolidColorBrush x:Key="ElapsedSurface" Color="{ThemeResource SystemColorWindowColor}" />
+			<SolidColorBrush x:Key="ElapsedSurfaceMuted" Color="{ThemeResource SystemColorWindowColor}" />
+			<SolidColorBrush x:Key="ElapsedSurfaceElevated" Color="{ThemeResource SystemColorWindowColor}" />
+			<SolidColorBrush x:Key="ElapsedStroke" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedStrokeStrong" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedDivider" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedTextPrimary" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedTextSecondary" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedTextMuted" Color="{ThemeResource SystemColorWindowTextColor}" />
+			<SolidColorBrush x:Key="ElapsedTextOnAccent" Color="{ThemeResource SystemColorHighlightTextColor}" />
+			<SolidColorBrush x:Key="ElapsedAccent" Color="{ThemeResource SystemColorHighlightColor}" />
+			<SolidColorBrush x:Key="ElapsedAccentMuted" Color="{ThemeResource SystemColorHighlightColor}" />
+			<SolidColorBrush x:Key="ElapsedAccentHover" Color="{ThemeResource SystemColorHighlightColor}" />
+			<SolidColorBrush x:Key="ElapsedDanger" Color="{ThemeResource SystemColorHighlightColor}" />
+			<SolidColorBrush x:Key="ElapsedDangerMuted" Color="{ThemeResource SystemColorWindowColor}" />
+			<SolidColorBrush x:Key="ElapsedSuccess" Color="{ThemeResource SystemColorHighlightColor}" />
+			<SolidColorBrush x:Key="ElapsedThumbnailBackground" Color="{ThemeResource SystemColorWindowTextColor}" />
+		</ResourceDictionary>
+
+	</ResourceDictionary.ThemeDictionaries>
+
+	<!-- corner radius tokens -->
+	<CornerRadius x:Key="ElapsedRadiusCard">14</CornerRadius>
+	<CornerRadius x:Key="ElapsedRadiusInput">8</CornerRadius>
+	<CornerRadius x:Key="ElapsedRadiusPill">999</CornerRadius>
+	<CornerRadius x:Key="ElapsedRadiusThumbnail">10</CornerRadius>
+
+	<!-- thickness tokens -->
+	<Thickness x:Key="ElapsedCardPadding">22</Thickness>
+	<Thickness x:Key="ElapsedPagePadding">28,20,28,20</Thickness>
+
+	<!-- typography styles. typography is set per-textblock for clarity (no implicit styles
+	     so we never accidentally restyle controls deeper in the tree). these named styles
+	     are used by explicit Style="..." references where needed. -->
+	<Style x:Key="ElapsedDisplayText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="28" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="LineHeight" Value="34" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextPrimary}" />
+	</Style>
+
+	<Style x:Key="ElapsedTitleText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="22" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="LineHeight" Value="28" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextPrimary}" />
+	</Style>
+
+	<Style x:Key="ElapsedSectionTitleText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="20" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextPrimary}" />
+	</Style>
+
+	<Style x:Key="ElapsedSubtitleText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextMuted}" />
+	</Style>
+
+	<Style x:Key="ElapsedBodyText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextSecondary}" />
+	</Style>
+
+	<Style x:Key="ElapsedCaptionText" TargetType="TextBlock">
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextMuted}" />
+	</Style>
+
+	<!-- card surface -->
+	<Style x:Key="ElapsedCard" TargetType="Border">
+		<Setter Property="Background" Value="{ThemeResource ElapsedSurface}" />
+		<Setter Property="BorderBrush" Value="{ThemeResource ElapsedStroke}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="CornerRadius" Value="{ThemeResource ElapsedRadiusCard}" />
+		<Setter Property="Padding" Value="{ThemeResource ElapsedCardPadding}" />
+	</Style>
+
+	<!-- primary accent button (hack club red) -->
+	<Style x:Key="ElapsedAccentButton" TargetType="Button">
+		<Setter Property="Background" Value="{ThemeResource ElapsedAccent}" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextOnAccent}" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="16,9" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="MinHeight" Value="36" />
+	</Style>
+
+	<!-- secondary / outlined button -->
+	<Style x:Key="ElapsedSecondaryButton" TargetType="Button">
+		<Setter Property="Background" Value="{ThemeResource ElapsedSurface}" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextPrimary}" />
+		<Setter Property="BorderBrush" Value="{ThemeResource ElapsedStroke}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Padding" Value="14,8" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="MinHeight" Value="36" />
+	</Style>
+
+	<!-- subtle icon button (transparent, no border) -->
+	<Style x:Key="ElapsedIconButton" TargetType="Button">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding" Value="8" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="Foreground" Value="{ThemeResource ElapsedTextSecondary}" />
+	</Style>
+
+	<!-- pill (used for footer credit, version badges, etc) -->
+	<Style x:Key="ElapsedPill" TargetType="Border">
+		<Setter Property="Background" Value="{ThemeResource ElapsedSurfaceElevated}" />
+		<Setter Property="BorderBrush" Value="{ThemeResource ElapsedStroke}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="CornerRadius" Value="{ThemeResource ElapsedRadiusPill}" />
+		<Setter Property="Padding" Value="14,6" />
+	</Style>
+
+</ResourceDictionary>

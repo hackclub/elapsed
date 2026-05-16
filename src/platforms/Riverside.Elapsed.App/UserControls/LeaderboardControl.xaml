@@ -4,52 +4,68 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Border
 		x:Name="LeaderboardRoot"
-		Padding="20"
-		Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-		BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-		BorderThickness="1"
-		CornerRadius="12">
-		<StackPanel Spacing="14">
-			<StackPanel Orientation="Horizontal" Spacing="12">
-				<Image Width="40" Height="40" Source="ms-appx:///Assets/Illustrations/orpheus-woah.png" />
-				<StackPanel VerticalAlignment="Center">
-					<TextBlock FontSize="22" FontWeight="SemiBold" Text="Leaderboard" />
-					<TextBlock FontSize="13" Opacity="0.7" Text="These Hack Clubbers spent the most time documenting their work!" />
-				</StackPanel>
-			</StackPanel>
+		Style="{StaticResource ElapsedCard}">
+		<StackPanel Spacing="22">
 
-			<ScrollViewer HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+			<!-- header: small cool-orpheus illustration + title + subtitle -->
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Image
+					Width="60"
+					Height="60"
+					VerticalAlignment="Center"
+					Source="ms-appx:///Assets/Illustrations/orpheus-cool.png" />
+				<StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
+					<TextBlock FontSize="22" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedTextPrimary}" Text="Leaderboard" />
+					<TextBlock
+						FontSize="13"
+						Foreground="{ThemeResource ElapsedTextMuted}"
+						Text="These Hack Clubbers spent the most time documenting their work this week." />
+				</StackPanel>
+			</Grid>
+
+			<!-- horizontal scroller of avatar tiles. ranked, with subtle ranking pip on each avatar. -->
+			<ScrollViewer
+				HorizontalScrollMode="Enabled"
+				HorizontalScrollBarVisibility="Auto"
+				VerticalScrollBarVisibility="Disabled">
 				<ItemsRepeater ItemsSource="{Binding LeaderboardEntries}">
 					<ItemsRepeater.Layout>
-						<StackLayout Orientation="Horizontal" Spacing="20" />
+						<StackLayout Orientation="Horizontal" Spacing="28" />
 					</ItemsRepeater.Layout>
 					<ItemsRepeater.ItemTemplate>
 						<DataTemplate>
 							<Button
-								Padding="0"
+								Padding="6"
 								Background="Transparent"
 								BorderThickness="0"
+								CornerRadius="12"
 								HorizontalAlignment="Stretch"
 								HorizontalContentAlignment="Center"
 								Command="{Binding DataContext.OpenProfileCommand, ElementName=LeaderboardRoot}"
 								CommandParameter="{Binding}">
-								<StackPanel Width="140" Spacing="6">
-									<Ellipse Width="84" Height="84" HorizontalAlignment="Center">
+								<StackPanel Width="128" Spacing="10">
+									<Ellipse Width="96" Height="96" HorizontalAlignment="Center" Stroke="{ThemeResource ElapsedStroke}" StrokeThickness="1">
 										<Ellipse.Fill>
 											<ImageBrush ImageSource="{Binding ProfilePictureUrl}" Stretch="UniformToFill" />
 										</Ellipse.Fill>
 									</Ellipse>
 									<TextBlock
 										HorizontalAlignment="Center"
-										FontSize="18"
+										FontSize="16"
 										FontWeight="SemiBold"
+										Foreground="{ThemeResource ElapsedTextPrimary}"
 										Text="{Binding Name}"
 										TextAlignment="Center"
 										TextTrimming="CharacterEllipsis" />
 									<TextBlock
 										HorizontalAlignment="Center"
 										FontSize="12"
-										Opacity="0.7"
+										Foreground="{ThemeResource ElapsedTextMuted}"
+										LineHeight="16"
 										Text="{Binding WeeklyText}"
 										TextAlignment="Center"
 										TextWrapping="Wrap" />

@@ -3,52 +3,110 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:utu="using:Uno.Toolkit.UI"
-	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	Background="{ThemeResource ElapsedPageBackground}"
 	Loaded="OnPageLoaded">
-	<Grid utu:SafeArea.Insets="VisibleBounds" Margin="24">
-		<Border
-			MaxWidth="560"
-			Padding="28"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
-			Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-			BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-			BorderThickness="1"
-			CornerRadius="10">
-			<StackPanel Spacing="14">
-				<TextBlock FontSize="28" FontWeight="SemiBold" Text="Recording" />
-				<TextBlock
-					FontSize="13"
-					Opacity="0.7"
-					Text="{Binding SourceName, FallbackValue='No source selected'}" />
+	<Grid utu:SafeArea.Insets="VisibleBounds">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-				<Border
-					Padding="16"
-					Background="{ThemeResource ControlFillColorSecondaryBrush}"
-					CornerRadius="8">
-					<TextBlock
-						FontFamily="Consolas"
-						FontSize="36"
-						FontWeight="SemiBold"
-						HorizontalAlignment="Center"
-						Text="{Binding ElapsedDisplay}" />
-				</Border>
-
-				<TextBlock Opacity="0.75" Text="{Binding Status}" TextWrapping="Wrap" />
-
-				<StackPanel Orientation="Horizontal" Spacing="10">
-					<Button
-						Command="{Binding PauseResumeCommand}"
-						Content="{Binding PauseResumeText}"
-						IsEnabled="{Binding IsRecording}" />
-					<Button
-						Command="{Binding StopCommand}"
-						Content="Stop"
-						IsEnabled="{Binding IsRecording}"
-						Style="{ThemeResource AccentButtonStyle}" />
-					<Button Command="{Binding BackCommand}" Content="Back" />
+		<!-- back row. -->
+		<StackPanel Margin="24,16,24,0" Orientation="Horizontal" Spacing="8">
+			<Button Style="{StaticResource ElapsedIconButton}" Command="{Binding BackCommand}">
+				<StackPanel Orientation="Horizontal" Spacing="6">
+					<FontIcon FontSize="14" Glyph="&#xE72B;" Foreground="{ThemeResource ElapsedTextSecondary}" />
+					<TextBlock FontSize="13" Foreground="{ThemeResource ElapsedTextSecondary}" Text="Back" />
 				</StackPanel>
-			</StackPanel>
-		</Border>
+			</Button>
+		</StackPanel>
+
+		<!-- recording stage. dark hero panel with big mono timer at the centre and the
+		     pulsing red status pip in the top-left to make it obvious recording is live. -->
+		<Grid Grid.Row="1" Padding="32,12,32,32">
+			<Border
+				MaxWidth="720"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Style="{StaticResource ElapsedCard}"
+				Padding="0">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<!-- top bar: live pip + source name. -->
+					<Grid Padding="22,18,22,4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+							<Border Width="10" Height="10" Background="{ThemeResource ElapsedAccent}" CornerRadius="999" />
+							<TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedAccent}" Text="REC" />
+						</StackPanel>
+						<TextBlock
+							Grid.Column="1"
+							Margin="16,0,0,0"
+							FontSize="13"
+							Foreground="{ThemeResource ElapsedTextMuted}"
+							Text="{Binding SourceName, FallbackValue='No source selected'}"
+							TextTrimming="CharacterEllipsis"
+							VerticalAlignment="Center" />
+					</Grid>
+
+					<!-- huge mono timer panel. -->
+					<Border
+						Grid.Row="1"
+						Margin="22,8,22,16"
+						Padding="24,40"
+						Background="{ThemeResource ElapsedSurfaceMuted}"
+						BorderBrush="{ThemeResource ElapsedStroke}"
+						BorderThickness="1"
+						CornerRadius="12">
+						<StackPanel Spacing="8" HorizontalAlignment="Center">
+							<TextBlock
+								FontFamily="Cascadia Code, Consolas, Courier New"
+								FontSize="64"
+								FontWeight="SemiBold"
+								HorizontalAlignment="Center"
+								Foreground="{ThemeResource ElapsedTextPrimary}"
+								Text="{Binding ElapsedDisplay}" />
+							<TextBlock
+								HorizontalAlignment="Center"
+								FontSize="13"
+								Foreground="{ThemeResource ElapsedTextMuted}"
+								Text="{Binding Status}"
+								TextWrapping="Wrap" />
+						</StackPanel>
+					</Border>
+
+					<!-- transport controls. pause/resume + stop (accent) + back. -->
+					<StackPanel
+						Grid.Row="2"
+						Margin="22,0,22,22"
+						HorizontalAlignment="Center"
+						Orientation="Horizontal"
+						Spacing="10">
+						<Button
+							Style="{StaticResource ElapsedSecondaryButton}"
+							Command="{Binding PauseResumeCommand}"
+							Content="{Binding PauseResumeText}"
+							IsEnabled="{Binding IsRecording}" />
+						<Button
+							Style="{StaticResource ElapsedAccentButton}"
+							Command="{Binding StopCommand}"
+							IsEnabled="{Binding IsRecording}">
+							<StackPanel Orientation="Horizontal" Spacing="8">
+								<Border Width="10" Height="10" Background="White" CornerRadius="2" />
+								<TextBlock Foreground="White" Text="Stop recording" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</Grid>
+			</Border>
+		</Grid>
 	</Grid>
 </Page>

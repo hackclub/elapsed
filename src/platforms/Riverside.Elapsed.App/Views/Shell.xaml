@@ -6,8 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
-	mc:Ignorable="d"
-	Background="{ThemeResource ElapsedPageBackground}">
+	mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>
 			<!-- app navigation bar (desktop only; browser hides this row, its host provides chrome) -->
@@ -21,10 +20,9 @@
 		<Grid
 			x:Name="AppTitleBar"
 			Grid.Row="0"
-			Height="52"
-			Padding="10,0,12,0"
-			Background="{ThemeResource ElapsedSurface}"
-			BorderBrush="{ThemeResource ElapsedDivider}"
+			Height="44"
+			Padding="4,0,8,0"
+			BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
 			BorderThickness="0,0,0,1"
 			Visibility="{Binding IsDesktopChromeVisible, Converter={StaticResource BoolToVisibilityConverter}}">
 			<Grid.ColumnDefinitions>
@@ -33,44 +31,27 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<!-- left: back + brand wordmark with hack-club-red badge + hamburger menu -->
+			<!-- left: back + hamburger menu + wordmark -->
 			<StackPanel
 				Grid.Column="0"
 				VerticalAlignment="Center"
 				Orientation="Horizontal"
-				Spacing="2">
+				Spacing="0">
 				<Button
-					Style="{StaticResource ElapsedIconButton}"
-					Command="{Binding BackCommand}"
-					ToolTipService.ToolTip="Back">
-					<FontIcon FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets" FontSize="14" Glyph="&#xE72B;" Foreground="{ThemeResource ElapsedTextSecondary}" />
-				</Button>
-				<Button
-					Margin="6,0,2,0"
-					Padding="8,6"
+					Padding="10,8"
 					Background="Transparent"
 					BorderThickness="0"
-					CornerRadius="8"
-					Command="{Binding OpenHomeCommand}">
-					<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-						<!-- hack-club-red square brandmark -->
-						<Border Width="22" Height="22" Background="{ThemeResource ElapsedAccent}" CornerRadius="6">
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" FontWeight="Bold" Foreground="White" Text="E" />
-						</Border>
-						<TextBlock FontSize="15.5" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedTextPrimary}" Text="Elapsed" VerticalAlignment="Center" />
-						<Border
-							Padding="7,2"
-							Background="{ThemeResource ElapsedAccentMuted}"
-							CornerRadius="999"
-							VerticalAlignment="Center"
-							Visibility="{Binding HasBrandingSecondary, Converter={StaticResource BoolToVisibilityConverter}}">
-							<TextBlock FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedAccent}" Text="{Binding BrandingSecondary}" VerticalAlignment="Center" />
-						</Border>
-					</StackPanel>
+					Command="{Binding BackCommand}"
+					ToolTipService.ToolTip="Back">
+					<FontIcon
+						FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets"
+						FontSize="13"
+						Glyph="&#xE72B;" />
 				</Button>
 				<Button
-					Margin="4,0,0,0"
-					Style="{StaticResource ElapsedIconButton}"
+					Padding="10,8"
+					Background="Transparent"
+					BorderThickness="0"
 					ToolTipService.ToolTip="Menu">
 					<Button.Flyout>
 						<MenuFlyout Placement="BottomEdgeAlignedLeft">
@@ -98,40 +79,59 @@
 							</MenuFlyoutItem>
 						</MenuFlyout>
 					</Button.Flyout>
-					<FontIcon FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets" FontSize="14" Glyph="&#xE700;" Foreground="{ThemeResource ElapsedTextSecondary}" />
+					<FontIcon
+						FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets"
+						FontSize="15"
+						Glyph="&#xE700;" />
+				</Button>
+				<Button
+					Margin="4,0,0,0"
+					Padding="6,4"
+					Background="Transparent"
+					BorderThickness="0"
+					Command="{Binding OpenHomeCommand}">
+					<StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+						<TextBlock FontSize="15" FontWeight="SemiBold" Text="Elapsed" VerticalAlignment="Center" />
+						<Border
+							Padding="5,1"
+							Background="{ThemeResource AccentFillColorDefaultBrush}"
+							CornerRadius="4"
+							Visibility="{Binding HasBrandingSecondary, Converter={StaticResource BoolToVisibilityConverter}}">
+							<TextBlock FontSize="11" FontWeight="SemiBold" Foreground="White" Text="{Binding BrandingSecondary}" VerticalAlignment="Center" />
+						</Border>
+					</StackPanel>
 				</Button>
 			</StackPanel>
 
-			<!-- centre: rounded pill search -->
+			<!-- centre: search -->
 			<Border
 				Grid.Column="1"
-				Width="380"
-				Height="34"
+				Width="340"
+				Height="28"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
-				Background="{ThemeResource ElapsedSurfaceMuted}"
-				BorderBrush="{ThemeResource ElapsedStroke}"
+				Background="{ThemeResource TextControlBackground}"
+				BorderBrush="{ThemeResource TextControlBorderBrush}"
 				BorderThickness="1"
-				CornerRadius="999">
-				<Grid Padding="14,0">
+				CornerRadius="4">
+				<Grid Padding="8,0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<FontIcon
 						Grid.Column="0"
-						Margin="0,0,8,0"
+						Margin="0,0,6,0"
 						FontSize="13"
 						Glyph="&#xE721;"
-						Foreground="{ThemeResource ElapsedTextMuted}"
+						Opacity="0.55"
 						VerticalAlignment="Center" />
 					<TextBox
 						Grid.Column="1"
 						Background="Transparent"
 						BorderThickness="0"
 						FontSize="13"
-						Foreground="{ThemeResource ElapsedTextPrimary}"
-						PlaceholderText="Search timelapses, users, projects"
+						PlaceholderText="Search"
 						Text="{Binding SearchText, Mode=TwoWay}"
 						VerticalAlignment="Center" />
 				</Grid>
@@ -142,14 +142,10 @@
 				Grid.Column="2"
 				VerticalAlignment="Center"
 				Orientation="Horizontal"
-				Spacing="10">
+				Spacing="8">
 				<SplitButton
 					Command="{Binding OpenRecordingCommand}"
-					Background="{ThemeResource ElapsedAccent}"
-					Foreground="White"
-					BorderThickness="0"
-					CornerRadius="8"
-					Padding="12,6"
+					Style="{ThemeResource AccentSplitButtonStyle}"
 					ToolTipService.ToolTip="Start a new timelapse session"
 					Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
 					<StackPanel Orientation="Horizontal" Spacing="6">
@@ -180,12 +176,11 @@
 
 				<!-- avatar button (authenticated) -->
 				<Button
-					Width="36"
-					Height="36"
+					Width="32"
+					Height="32"
 					Padding="0"
 					Background="Transparent"
 					BorderThickness="0"
-					CornerRadius="999"
 					ToolTipService.ToolTip="Account"
 					Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
 					<Button.Flyout>
@@ -204,8 +199,8 @@
 						</MenuFlyout>
 					</Button.Flyout>
 					<Grid>
-						<Ellipse Width="34" Height="34" Fill="{ThemeResource ElapsedAccent}" />
-						<Ellipse Width="34" Height="34" Stroke="{ThemeResource ElapsedStroke}" StrokeThickness="1">
+						<Ellipse Width="30" Height="30" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
+						<Ellipse Width="30" Height="30">
 							<Ellipse.Fill>
 								<ImageBrush ImageSource="{Binding AvatarUrl}" Stretch="UniformToFill" />
 							</Ellipse.Fill>
@@ -213,7 +208,7 @@
 						<TextBlock
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
-							FontSize="12"
+							FontSize="11"
 							FontWeight="SemiBold"
 							Foreground="White"
 							IsHitTestVisible="False"
@@ -223,11 +218,10 @@
 
 				<!-- sign-in button (unauthenticated) -->
 				<Button
-					Style="{StaticResource ElapsedAccentButton}"
 					Command="{Binding SignInCommand}"
 					Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<StackPanel Orientation="Horizontal" Spacing="6">
-						<FontIcon FontSize="13" Glyph="&#xE77B;" Foreground="White" />
+						<FontIcon FontSize="13" Glyph="&#xE77B;" />
 						<TextBlock Text="Sign in" />
 					</StackPanel>
 				</Button>

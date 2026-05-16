@@ -3,127 +3,65 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:utu="using:Uno.Toolkit.UI"
-	Background="{ThemeResource ElapsedPageBackground}"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	NavigationCacheMode="Required">
 	<Grid utu:SafeArea.Insets="VisibleBounds">
-		<!-- two-column hero on wide displays; collapses to a single centred card on narrow. -->
-		<Grid
-			MaxWidth="1080"
+		<Border
+			MaxWidth="480"
+			Padding="32"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Center"
-			Margin="32"
-			ColumnSpacing="56">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" MinWidth="260" />
-				<ColumnDefinition Width="460" />
-			</Grid.ColumnDefinitions>
-
-			<!-- left: marketing column with big illustration and tagline. -->
-			<StackPanel Grid.Column="0" Spacing="22" VerticalAlignment="Center">
-				<Border
-					Padding="10,4"
-					HorizontalAlignment="Left"
-					Background="{ThemeResource ElapsedAccentMuted}"
-					CornerRadius="999">
-					<StackPanel Orientation="Horizontal" Spacing="6">
-						<Border Width="8" Height="8" Background="{ThemeResource ElapsedAccent}" CornerRadius="999" />
-						<TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource ElapsedAccent}" Text="Elapsed for Lapse" />
-					</StackPanel>
-				</Border>
-				<TextBlock
-					FontSize="42"
-					FontWeight="SemiBold"
-					LineHeight="50"
-					Foreground="{ThemeResource ElapsedTextPrimary}"
-					Text="Track every minute of every build."
-					TextWrapping="Wrap" />
-				<TextBlock
-					FontSize="15"
-					LineHeight="22"
-					Foreground="{ThemeResource ElapsedTextSecondary}"
-					Text="Sign in with your Lapse account to record timelapses, share them with the rest of Hack Club, and climb the weekly leaderboard."
-					TextWrapping="Wrap" />
+			Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+			BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+			BorderThickness="1"
+			CornerRadius="16">
+			<StackPanel Spacing="16">
 				<Image
-					Width="220"
-					Height="220"
-					HorizontalAlignment="Left"
+					Width="100"
+					Height="100"
+					HorizontalAlignment="Center"
 					Source="ms-appx:///Assets/Illustrations/orpheus-time.png" />
-			</StackPanel>
 
-			<!-- right: sign-in card. -->
-			<Border
-				Grid.Column="1"
-				Style="{StaticResource ElapsedCard}"
-				Padding="36"
-				VerticalAlignment="Center">
-				<StackPanel Spacing="20">
-					<StackPanel Spacing="6">
-						<TextBlock
-							FontSize="26"
-							FontWeight="SemiBold"
-							Foreground="{ThemeResource ElapsedTextPrimary}"
-							Text="{Binding Title}" />
-						<TextBlock
-							FontSize="14"
-							LineHeight="20"
-							Foreground="{ThemeResource ElapsedTextMuted}"
-							Text="{Binding Description}"
-							TextWrapping="Wrap" />
+				<TextBlock
+					HorizontalAlignment="Center"
+					FontSize="24"
+					FontWeight="SemiBold"
+					Text="{Binding Title}" />
+
+				<TextBlock
+					HorizontalAlignment="Center"
+					FontSize="14"
+					Opacity="0.7"
+					Text="{Binding Description}"
+					TextAlignment="Center"
+					TextWrapping="Wrap" />
+
+				<Button
+					MinWidth="200"
+					HorizontalAlignment="Center"
+					Command="{Binding LoginCommand}"
+					IsEnabled="{Binding IsLoginSupported}"
+					Style="{ThemeResource AccentButtonStyle}">
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<FontIcon FontSize="14" Glyph="&#xE77B;" />
+						<TextBlock Text="Sign in with Lapse" />
 					</StackPanel>
+				</Button>
 
-					<!-- prominent hack-club-red cta. -->
-					<Button
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Center"
-						MinHeight="48"
-						FontSize="15"
-						Style="{StaticResource ElapsedAccentButton}"
-						Command="{Binding LoginCommand}"
-						IsEnabled="{Binding IsLoginSupported}">
-						<StackPanel Orientation="Horizontal" Spacing="10">
-							<FontIcon FontSize="14" Glyph="&#xE77B;" Foreground="White" />
-							<TextBlock FontWeight="SemiBold" Foreground="White" Text="Continue with Lapse" />
-						</StackPanel>
-					</Button>
-
-					<!-- divider with text -->
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Border Height="1" VerticalAlignment="Center" Background="{ThemeResource ElapsedDivider}" />
-						<TextBlock Grid.Column="1" Margin="12,0" FontSize="11" Foreground="{ThemeResource ElapsedTextMuted}" Text="AUTHORISED BY LAPSE" />
-						<Border Grid.Column="2" Height="1" VerticalAlignment="Center" Background="{ThemeResource ElapsedDivider}" />
-					</Grid>
-
+				<!-- shown when sign-in is unavailable (e.g. wasm preview) or when an error occurs -->
+				<Border
+					Padding="12"
+					Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+					CornerRadius="8"
+					Visibility="{Binding HasMessage, Converter={StaticResource BoolToVisibilityConverter}}">
 					<TextBlock
-						FontSize="12"
-						LineHeight="18"
-						Foreground="{ThemeResource ElapsedTextMuted}"
-						TextWrapping="Wrap"
-						Text="Elapsed is an unofficial Hack Club client. We never see your Lapse password — authentication happens directly through Lapse's OAuth flow." />
-
-					<!-- error / unavailable banner -->
-					<Border
-						Padding="14"
-						Background="{ThemeResource ElapsedDangerMuted}"
-						BorderBrush="{ThemeResource ElapsedDanger}"
-						BorderThickness="1"
-						CornerRadius="10"
-						Visibility="{Binding HasMessage, Converter={StaticResource BoolToVisibilityConverter}}">
-						<StackPanel Orientation="Horizontal" Spacing="10">
-							<FontIcon FontSize="14" Foreground="{ThemeResource ElapsedDanger}" Glyph="&#xE7BA;" VerticalAlignment="Top" />
-							<TextBlock
-								FontSize="13"
-								Foreground="{ThemeResource ElapsedDanger}"
-								Text="{Binding Message}"
-								TextWrapping="Wrap" />
-						</StackPanel>
-					</Border>
-				</StackPanel>
-			</Border>
-		</Grid>
+						FontSize="13"
+						Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+						Text="{Binding Message}"
+						TextAlignment="Center"
+						TextWrapping="Wrap" />
+				</Border>
+			</StackPanel>
+		</Border>
 	</Grid>
 </Page>

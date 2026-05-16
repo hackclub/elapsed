@@ -4,21 +4,25 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:controls="using:Riverside.Elapsed.App.UserControls"
 	xmlns:utu="using:Uno.Toolkit.UI"
+	xmlns:converters="using:Riverside.Elapsed.App.Converters"
 	NavigationCacheMode="Required">
-	<Grid utu:SafeArea.Insets="VisibleBounds" Background="{ThemeResource ElapsedPageBackground}">
-		<ScrollViewer
-			x:Name="MainRoot"
-			HorizontalScrollMode="Disabled"
-			VerticalScrollBarVisibility="Auto">
-			<!-- centred content column. wider gutters and breathing room than before. -->
-			<Grid HorizontalAlignment="Stretch" Padding="32,28,32,28">
-				<StackPanel MaxWidth="1200" HorizontalAlignment="Stretch" Spacing="24">
+	<Grid utu:SafeArea.Insets="VisibleBounds" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-					<!-- welcome banner (signed out only). detective orpheus on the left, big greeting,
-					     hack-club-red sign-in cta on the right. flush, borderless, big illustration. -->
-					<Grid
-						Padding="4,8,4,16"
-						Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+		<ScrollViewer x:Name="MainRoot" HorizontalScrollMode="Disabled" Padding="24,16,24,24">
+			<StackPanel Spacing="20">
+				<!-- welcome banner (shown only when not authenticated; mock 1/2) -->
+				<Border
+					Padding="20"
+					Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+					BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+					BorderThickness="1"
+					CornerRadius="12"
+					Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
@@ -26,26 +30,24 @@
 						</Grid.ColumnDefinitions>
 
 						<Image
-							Width="112"
-							Height="112"
+							Width="96"
+							Height="96"
 							VerticalAlignment="Center"
-							Source="ms-appx:///Assets/Illustrations/orpheus-time.png" />
+							Source="ms-appx:///Assets/Illustrations/orpheus-cool.png" />
 
 						<StackPanel
 							Grid.Column="1"
-							Margin="28,0,28,0"
+							Margin="20,0,20,0"
 							VerticalAlignment="Center"
 							Spacing="6">
 							<TextBlock
-								FontSize="28"
+								FontSize="26"
 								FontWeight="SemiBold"
-								LineHeight="34"
-								Foreground="{ThemeResource ElapsedTextPrimary}"
 								Text="{Binding GreetingTitle}"
 								TextWrapping="WrapWholeWords" />
 							<TextBlock
 								FontSize="14"
-								Foreground="{ThemeResource ElapsedTextMuted}"
+								Opacity="0.75"
 								Text="{Binding GreetingSubtitle}"
 								TextWrapping="WrapWholeWords" />
 						</StackPanel>
@@ -53,41 +55,40 @@
 						<Button
 							Grid.Column="2"
 							VerticalAlignment="Center"
-							Style="{StaticResource ElapsedAccentButton}"
-							Command="{Binding SignInCommand}">
-							<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-								<FontIcon
-									FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets"
-									FontSize="14"
-									Foreground="White"
-									Glyph="&#xE77B;" />
-								<TextBlock FontSize="14" FontWeight="SemiBold" Foreground="White" Text="Sign in with Lapse" VerticalAlignment="Center" />
-							</StackPanel>
-						</Button>
+							MinWidth="120"
+							Style="{ThemeResource AccentButtonStyle}"
+							Command="{Binding SignInCommand}"
+							Content="Sign in" />
 					</Grid>
+				</Border>
 
-					<!-- divider beneath the welcome banner -->
-					<Border
-						Height="1"
-						Background="{ThemeResource ElapsedDivider}"
-						Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-
-					<controls:LeaderboardControl />
-					<controls:ExploreTimelapsesControl />
-
-					<!-- footer credit pill -->
-					<Border
-						Margin="0,12,0,8"
-						HorizontalAlignment="Center"
-						Style="{StaticResource ElapsedPill}">
-						<TextBlock
-							FontSize="12"
-							Foreground="{ThemeResource ElapsedTextMuted}"
-							Text="{Binding FooterText}"
-							TextAlignment="Center" />
-					</Border>
-				</StackPanel>
-			</Grid>
+				<controls:LeaderboardControl />
+				<controls:ExploreTimelapsesControl />
+			</StackPanel>
 		</ScrollViewer>
+
+		<!-- footer: compact pill on web; full credit line on desktop. -->
+		<Grid Grid.Row="1" Margin="24,0,24,12">
+			<Border
+				Padding="10,4"
+				HorizontalAlignment="Center"
+				Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+				BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+				BorderThickness="1"
+				CornerRadius="99"
+				Visibility="{Binding IsWebPlatform, Converter={StaticResource BoolToVisibilityConverter}}">
+				<TextBlock FontSize="12" Opacity="0.75" Text="{Binding WebFooterText}" />
+			</Border>
+
+			<TextBlock
+				Margin="0,8,0,0"
+				HorizontalAlignment="Center"
+				FontSize="12"
+				Opacity="0.75"
+				Text="{Binding FooterText}"
+				TextAlignment="Center"
+				TextWrapping="Wrap"
+				Visibility="{Binding IsWebPlatform, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+		</Grid>
 	</Grid>
 </Page>

@@ -7,13 +7,13 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<!-- base winui + uno toolkit resources -->
+				<!-- Load WinUI resources -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
-				<!-- elapsed design tokens (light/dark/high-contrast brushes, typography, surfaces) -->
-				<ResourceDictionary Source="ms-appx:///Styles/Theme.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 
+			<!-- Add resources here -->
 			<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 			<converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
 		</ResourceDictionary>

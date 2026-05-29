@@ -5,8 +5,7 @@ using Riverside.Elapsed.App.Services.Api;
 namespace Riverside.Elapsed.App.ViewModels;
 
 /// <summary>
-/// Backs the user profile page: avatar, bio, links, action buttons, and the user's own
-/// recent timelapses grid.
+/// Backs the user profile page: avatar, bio, links, action buttons, and the user's own recent timelapses grid.
 /// </summary>
 public partial class UserProfileViewModel : ObservableObject
 {

@@ -63,8 +63,8 @@ namespace Riverside.Elapsed.App.Services.Api;
 
 public static class ApiMappingExtensions
 {
-	private static readonly Uri FallbackUri = new("https://example.com", UriKind.Absolute);
-	private static readonly Uri FallbackProfileUri = new("https://example.com", UriKind.Absolute);
+	private static readonly Uri FallbackUri = new("https://hackclub.com", UriKind.Absolute);
+	private static readonly Uri FallbackProfilePictureUri = new("https://lapse.hackclub.com/images/default-pfp.png", UriKind.Absolute);
 
 	public static UserDetails MapUserDetails(MyselfGetResponseMember1_data_userMember1 user)
 		=> new()
@@ -75,7 +75,7 @@ public static class ApiMappingExtensions
 			DisplayName = user.DisplayName ?? string.Empty,
 			ProfilePictureUrl = Uri.TryCreate(user.ProfilePictureUrl, UriKind.Absolute, out var profilePicture)
 				? profilePicture
-				: FallbackProfileUri,
+				: FallbackProfilePictureUri,
 			Bio = user.Bio ?? string.Empty,
 			Urls = (user.Urls ?? []).Select(url => new Uri(url, UriKind.Absolute)).ToArray(),
 			HackatimeId = user.HackatimeId?.String,
@@ -91,7 +91,7 @@ public static class ApiMappingExtensions
 			DisplayName = user.DisplayName ?? string.Empty,
 			ProfilePictureUrl = Uri.TryCreate(user.ProfilePictureUrl, UriKind.Absolute, out var profilePicture)
 				? profilePicture
-				: FallbackProfileUri,
+				: FallbackProfilePictureUri,
 			Bio = user.Bio ?? string.Empty,
 			Urls = (user.Urls ?? []).Select(url => new Uri(url, UriKind.Absolute)).ToArray(),
 			HackatimeId = user.HackatimeId?.String,
@@ -107,7 +107,7 @@ public static class ApiMappingExtensions
 			DisplayName = user.DisplayName ?? string.Empty,
 			ProfilePictureUrl = Uri.TryCreate(user.ProfilePictureUrl, UriKind.Absolute, out var profilePicture)
 				? profilePicture
-				: FallbackProfileUri,
+				: FallbackProfilePictureUri,
 			Bio = user.Bio ?? string.Empty,
 			Urls = (user.Urls ?? []).Select(url => new Uri(url, UriKind.Absolute)).ToArray(),
 			HackatimeId = user.HackatimeId?.String,
@@ -130,7 +130,7 @@ public static class ApiMappingExtensions
 			DisplayName = GetString(values, "displayName"),
 			ProfilePictureUrl = Uri.TryCreate(GetString(values, "profilePictureUrl"), UriKind.Absolute, out var profilePicture)
 				? profilePicture
-				: FallbackProfileUri,
+				: FallbackProfilePictureUri,
 			Bio = GetString(values, "bio"),
 			Urls = GetStringArray(values, "urls")
 				.Select(url => new Uri(url, UriKind.Absolute))
@@ -146,7 +146,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(GetAllAppsPostResponseMember1_data_apps_createdByMember1 createdBy)
@@ -155,7 +155,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(CreateAppPostResponseMember1_data_app_createdByMember1 createdBy)
@@ -164,7 +164,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(UpdateAppPostResponseMember1_data_app_createdByMember1 createdBy)
@@ -173,7 +173,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(ListPostResponseMember1_data_keys_createdBy createdBy)
@@ -182,7 +182,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(CreatePostResponseMember1_data_key_createdBy createdBy)
@@ -191,7 +191,7 @@ public static class ApiMappingExtensions
 			UserId = createdBy.Id ?? string.Empty,
 			Handle = createdBy.Handle ?? string.Empty,
 			DisplayName = createdBy.DisplayName ?? string.Empty,
-			ProfilePictureUrl = FallbackProfileUri,
+			ProfilePictureUrl = FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(WeeklyLeaderboardGetResponseMember1_data_leaderboard entry)
@@ -200,7 +200,7 @@ public static class ApiMappingExtensions
 			UserId = entry.Id ?? string.Empty,
 			Handle = entry.Handle ?? string.Empty,
 			DisplayName = entry.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(entry.Pfp, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
+			ProfilePictureUrl = Uri.TryCreate(entry.Pfp, UriKind.Absolute, out var uri) ? uri : FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(RecentTimelapsesGetResponseMember1_data_timelapses_owner owner)
@@ -209,7 +209,7 @@ public static class ApiMappingExtensions
 			UserId = owner.Id ?? string.Empty,
 			Handle = owner.Handle ?? string.Empty,
 			DisplayName = owner.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
+			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfilePictureUri,
 		};
 
 	public static AppUser MapUser(RecentTimelapsesGetResponseMember1_data_timelapses_comments_author author)
@@ -218,7 +218,7 @@ public static class ApiMappingExtensions
 			UserId = author.Id ?? string.Empty,
 			Handle = author.Handle ?? string.Empty,
 			DisplayName = author.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
+			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfilePictureUri,
 		};
 
 	public static LeaderboardEntry MapLeaderboardEntry(WeeklyLeaderboardGetResponseMember1_data_leaderboard entry)
@@ -231,7 +231,7 @@ public static class ApiMappingExtensions
 				DisplayName = entry.DisplayName ?? string.Empty,
 				ProfilePictureUrl = Uri.TryCreate(entry.Pfp, UriKind.Absolute, out var uri)
 					? uri
-					: FallbackProfileUri,
+					: FallbackProfilePictureUri,
 				Bio = string.Empty,
 				Urls = Array.Empty<Uri>(),
 				HackatimeId = null,
@@ -246,7 +246,7 @@ public static class ApiMappingExtensions
 			UserId = owner.Id ?? string.Empty,
 			Handle = owner.Handle ?? string.Empty,
 			DisplayName = owner.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
+			ProfilePictureUrl = Uri.TryCreate(owner.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfilePictureUri,
 			Bio = owner.Bio ?? string.Empty,
 			Urls = (owner.Urls ?? []).Select(url => new Uri(url, UriKind.Absolute)).ToArray(),
 			HackatimeId = owner.HackatimeId?.String,
@@ -259,7 +259,7 @@ public static class ApiMappingExtensions
 			UserId = author.Id ?? string.Empty,
 			Handle = author.Handle ?? string.Empty,
 			DisplayName = author.DisplayName ?? string.Empty,
-			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfileUri,
+			ProfilePictureUrl = Uri.TryCreate(author.ProfilePictureUrl, UriKind.Absolute, out var uri) ? uri : FallbackProfilePictureUri,
 			Bio = author.Bio ?? string.Empty,
 			Urls = (author.Urls ?? []).Select(url => new Uri(url, UriKind.Absolute)).ToArray(),
 			HackatimeId = author.HackatimeId?.String,

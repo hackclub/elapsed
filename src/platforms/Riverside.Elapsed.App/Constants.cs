@@ -4,7 +4,7 @@ using Riverside.Elapsed.App.Converters.Json;
 
 namespace Riverside.Elapsed.App;
 
-public static class Constants
+public static partial class Constants
 {
 	public static readonly JsonSerializerOptions SerializerOptions = GetJsonSerializerOptions();
 

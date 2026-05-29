@@ -5,7 +5,7 @@ namespace Riverside.Elapsed.App.Services.Auth;
 public interface ILapseAuthService
 {
 	event EventHandler? LoggedOut;
-        event EventHandler? LoggedIn;
+	event EventHandler? LoggedIn;
 
 	/// <summary>Gets a value indicating whether a valid session token is currently stored.</summary>
 	bool IsAuthenticated { get; }

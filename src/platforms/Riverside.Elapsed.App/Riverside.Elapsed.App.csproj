@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-desktop;net10.0-android;net10.0-ios;net10.0-browserwasm;net10.0-windows10.0.26100.0</TargetFrameworks>
 
@@ -35,22 +35,18 @@
 
 	<ItemGroup>
 		<ProjectReference Include="$(SharedDirectory)\Riverside.Elapsed\Riverside.Elapsed.csproj" />
+		<ProjectReference Include="$(SharedDirectory)\Riverside.MediaRecording\Riverside.MediaRecording.csproj" />
 	</ItemGroup>
 
-	<!--
-		Riverside.MediaRecording uses Windows-only CsWin32 P/Invoke. We reference it only on
-		the desktop and windows10 head builds; other platforms get the no-op recording facade.
-	-->
-	<ItemGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">
-		<ProjectReference Include="$(MSBuildThisFileDirectory)..\..\core\Riverside.MediaRecording\Riverside.MediaRecording.csproj" />
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	  <Folder Include="Services\Drafts\" />
+	  <Folder Include="Services\Recording\" />
+	  <Folder Include="Services\Storage\" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">
 		<DefineConstants>$(DefineConstants);HAS_MEDIA_RECORDING</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">
-		<WindowsPackageType>MSIX</WindowsPackageType>
 	</PropertyGroup>
 
 	<Target Name="GenerateBuildInfo" BeforeTargets="MarkupCompilePass1;XamlPreCompile;CoreCompile">
@@ -61,20 +57,17 @@
 		<MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(GeneratedBuildInfoFile)'))" />
 
 		<ItemGroup>
-			<_BuildInfoLines Include="namespace Riverside.Elapsed.App.Services.Build" />
+			<_BuildInfoLines Include="namespace Riverside.Elapsed.App" />
 			<_BuildInfoLines Include="{" />
-			<_BuildInfoLines Include="&#x9;internal static class BuildInfoGenerated" />
-			<_BuildInfoLines Include="&#x9;{" />
-			<_BuildInfoLines Include="&#x9;&#x9;internal const string DisplayVersion = &quot;$(DisplayVersion)&quot;%3B" />
-			<_BuildInfoLines Include="&#x9;&#x9;internal const string BuildTimestampIso = &quot;$(BuildTimestampIso)&quot;%3B" />
-			<_BuildInfoLines Include="&#x9;}" />
+			<_BuildInfoLines Include="	partial class Constants" />
+			<_BuildInfoLines Include="	{" />
+			<_BuildInfoLines Include="		internal const string DisplayVersion = &quot;$(DisplayVersion)&quot;%3B" />
+			<_BuildInfoLines Include="		internal const string BuildTimestampIso = &quot;$(BuildTimestampIso)&quot;%3B" />
+			<_BuildInfoLines Include="	}" />
 			<_BuildInfoLines Include="}" />
 		</ItemGroup>
 
-		<WriteLinesToFile
-			File="$(GeneratedBuildInfoFile)"
-			Overwrite="true"
-			Lines="@(_BuildInfoLines)" />
+		<WriteLinesToFile File="$(GeneratedBuildInfoFile)" Overwrite="true" Lines="@(_BuildInfoLines)" />
 
 		<ItemGroup>
 			<Compile Include="$(GeneratedBuildInfoFile)" />

@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Riverside.Elapsed.App.Converters.Json;
 
 namespace Riverside.Elapsed.App;
 

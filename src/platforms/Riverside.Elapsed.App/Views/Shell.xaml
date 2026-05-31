@@ -15,8 +15,10 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<!-- compact navigation bar shown on desktop platforms below the native window title bar.
-		     hidden on browser (IsDesktopChromeVisible = false) since the browser provides all chrome. -->
+		<!--
+			compact navigation bar shown on desktop platforms below the native window title bar.
+			hidden on browser (IsDesktopChromeVisible = false) since the browser provides all chrome.
+		-->
 		<Grid
 			x:Name="AppTitleBar"
 			Grid.Row="0"
@@ -90,14 +92,26 @@
 					Background="Transparent"
 					BorderThickness="0"
 					Command="{Binding OpenHomeCommand}">
-					<StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-						<TextBlock FontSize="15" FontWeight="SemiBold" Text="Elapsed" VerticalAlignment="Center" />
+					<StackPanel
+						VerticalAlignment="Center"
+						Orientation="Horizontal"
+						Spacing="5">
+						<TextBlock
+							VerticalAlignment="Center"
+							FontSize="15"
+							FontWeight="SemiBold"
+							Text="Elapsed" />
 						<Border
 							Padding="5,1"
 							Background="{ThemeResource AccentFillColorDefaultBrush}"
 							CornerRadius="4"
 							Visibility="{Binding HasBrandingSecondary, Converter={StaticResource BoolToVisibilityConverter}}">
-							<TextBlock FontSize="11" FontWeight="SemiBold" Foreground="White" Text="{Binding BrandingSecondary}" VerticalAlignment="Center" />
+							<TextBlock
+								VerticalAlignment="Center"
+								FontSize="11"
+								FontWeight="SemiBold"
+								Foreground="White"
+								Text="{Binding BrandingSecondary}" />
 						</Border>
 					</StackPanel>
 				</Button>
@@ -122,18 +136,18 @@
 					<FontIcon
 						Grid.Column="0"
 						Margin="0,0,6,0"
+						VerticalAlignment="Center"
 						FontSize="13"
 						Glyph="&#xE721;"
-						Opacity="0.55"
-						VerticalAlignment="Center" />
+						Opacity="0.55" />
 					<TextBox
 						Grid.Column="1"
+						VerticalAlignment="Center"
 						Background="Transparent"
 						BorderThickness="0"
 						FontSize="13"
 						PlaceholderText="Search"
-						Text="{Binding SearchText, Mode=TwoWay}"
-						VerticalAlignment="Center" />
+						Text="{Binding SearchText, Mode=TwoWay}" />
 				</Grid>
 			</Border>
 
@@ -199,7 +213,10 @@
 						</MenuFlyout>
 					</Button.Flyout>
 					<Grid>
-						<Ellipse Width="30" Height="30" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
+						<Ellipse
+							Width="30"
+							Height="30"
+							Fill="{ThemeResource AccentFillColorDefaultBrush}" />
 						<Ellipse Width="30" Height="30">
 							<Ellipse.Fill>
 								<ImageBrush ImageSource="{Binding AvatarUrl}" Stretch="UniformToFill" />
@@ -217,9 +234,7 @@
 				</Button>
 
 				<!-- sign-in button (unauthenticated) -->
-				<Button
-					Command="{Binding SignInCommand}"
-					Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+				<Button Command="{Binding SignInCommand}" Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<StackPanel Orientation="Horizontal" Spacing="6">
 						<FontIcon FontSize="13" Glyph="&#xE77B;" />
 						<TextBlock Text="Sign in" />

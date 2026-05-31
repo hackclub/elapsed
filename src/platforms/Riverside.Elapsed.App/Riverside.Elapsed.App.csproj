@@ -41,6 +41,8 @@
 	<ItemGroup>
 	  <Folder Include="Converters\" />
 	  <Folder Include="Extensions\" />
+	  <Folder Include="Services\Api\" />
+	  <Folder Include="Services\Auth\" />
 	  <Folder Include="Services\Drafts\" />
 	  <Folder Include="Services\Recording\" />
 	  <Folder Include="Services\Storage\" />

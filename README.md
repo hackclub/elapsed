@@ -1,14 +1,5 @@
 <!-- Remember to keep the README in src/ up to date with this one. -->
 
-> [!IMPORTANT]
-> <a href="https://hackclub.enterprise.slack.com/archives/C0AKTBFM0BU">
-> 	<img src=".github/assets/Source_Hackclub.svg" alt="Find it on Hack Club" height="48" />
-> </a>
->
-> Elapsed is currently in active development as a part of the ["Hack Club: The Game"](https://game.hackclub.com) programme, an event in New York City, organised by Hack Club.
->
-> If you are a Hack Club member and are interested in contributing, please reach out via the [`#elapsed`](https://hackclub.enterprise.slack.com/archives/C0AKTBFM0BU) channel on the Hack Club Slack!
-
 <p align="center">
 	<img src=".github/assets/Header.png" alt="Elapsed banner" />
 </p>
@@ -17,7 +8,7 @@
 	<a href="https://elapsed.hackclub.com">
 		<img src=".github/assets/Source_Web.svg" alt="Find it on the Web" height="64" />
 	</a>
-	<a href="https://github.com/Lamparter/Elapsed/releases/latest">
+	<a href="https://github.com/hackclub/elapsed/releases/latest">
 		<img src=".github/assets/Source_GitHub.svg" alt="Get it from GitHub" height="64" />
 	</a>
 	<a href="https://nuget.org/packages/Riverside.Elapsed.CommandLine">
@@ -96,7 +87,7 @@ See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-chec
 > *Click the "Code" button on the top of this page to make cloning easier.*
 
 ```bash
-git clone https://github.com/Lamparter/Elapsed
+git clone https://github.com/hackclub/elapsed
 cd Elapsed
 ```
 
@@ -134,7 +125,7 @@ It returns API responses as pretty JSON, serialised from the Lapse API projectio
 Appending `-?`, `-h`, `--help` at the end of any command will show an explanation of available commands, or the current command.
 If you want to see all the HTTP requests the Elapsed CLI (and, by extension, the Lapse API projection) can make, run the command `elapsed list-operations`.
 
-You can download the Elapsed CLI [from GitHub Releases](https://github.com/Lamparter/Elapsed/releases/latest), or build the `Riverside.Elapsed.CommandLine` project from source.
+You can download the Elapsed CLI [from GitHub Releases](https://github.com/hackclub/elapsed/releases/latest), or build the `Riverside.Elapsed.CommandLine` project from source.
 Optionally, you can install the Elapsed CLI [as a .NET tool](https://nuget.org/packages/Riverside.Elapsed.CommandLine) from NuGet.
 
 <img width="620" height="375" alt="Elapsed CLI" src="https://github.com/user-attachments/assets/f435c52b-7800-45f0-8d6c-37e418cc22e5" />
@@ -149,7 +140,7 @@ The Kiota generator emits clean C# code based on the [Lapse API documentation](h
 Using the client in the Lapse API is incredibly simple - you must pass a request adapter instance (`IRequestAdapter`) into the API client class constructor (`Riverside.Elapsed.ApiClient`).
 The API client class is an abstraction over HTTP requests that is specific to the Lapse API.
 
-If you are unsure how to consume the API client class, the [Elapsed CLI project](https://github.com/Lamparter/Elapsed/tree/main/src/platforms/Riverside.Elapsed.CommandLine) is an excellent example implementation.
+If you are unsure how to consume the API client class, the [Elapsed CLI project](https://github.com/hackclub/elapsed/tree/main/src/platforms/Riverside.Elapsed.CommandLine) is an excellent example implementation.
 It is recommended to have a good understanding of [how Microsoft Kiota works](https://learn.microsoft.com/en-us/openapi/kiota/design) before using the Elapsed API projection.
 
 ### Supported platforms
@@ -173,23 +164,10 @@ It is recommended to have a good understanding of [how Microsoft Kiota works](ht
 > The Lapse API projection for .NET is generated automatically on build based on the public Lapse API.
 > If you are looking for the code for the Lapse API projection, it is a part of the [Advanced Compiler Services for .NET](https://github.com/Lamparter/CompilerPlatform) repo, specifically the [`Riverside.CompilerPlatform.CSharp.Features.Kiota`](https://github.com/Lamparter/CompilerPlatform/tree/main/src/features/Riverside.CompilerPlatform.Features.Kiota) library.
 > If you have found a bug with the Lapse API or want to improve API documentation, please make an issue or PR as appropriate on the [main Lapse repo](https://github.com/hackclub/lapse).
-> If you're ever unsure of where to report an issue, ask in any one of the [`#lapse`](https://hackclub.enterprise.slack.com/archives/C0AJ1FK8E8Z), [`#lapse-dev`](https://hackclub.enterprise.slack.com/archives/C0AH74J112T), [`#lapse-help`](https://hackclub.enterprise.slack.com/archives/C09NVLWU61E) or [`#elapsed`](https://hackclub.enterprise.slack.com/archives/C0AKTBFM0BU) channels on Slack!
+> If you're ever unsure of where to report an issue, ask in the [`#lapse-help`](https://hackclub.enterprise.slack.com/archives/C09NVLWU61E) channel on Slack!
 
 **Contributions are welcome** - please feel free to add **missing features**, **new styles**, or **fix bugs**.
 And of course, please open as many issues or pull requests as you like! *All contributions are helpful in their own way.*
-
-Because Elapsed is a Hack Club YSWS project, all time is tracked on Hackatime, Hack Club's software for tracking time spent across projects.
-*(and yes, all work on Elapsed was tracked using Lapse!)*
-Below are the two main clocks for Elapsed (the first being Elapsed itself, and the second being the "Advanced Compiler Services for .NET" project, which is responsible for the Lapse API projection):
-
-<p align="left">
-	<a href="https://hackatime.hackclub.com">
-		<img src="https://hackatime-badge.hackclub.com/U0A9B38F413/Elapsed" alt="Elapsed">
-	</a>
-	<a href="https://hackatime.hackclub.com">
-		<img src="https://hackatime-badge.hackclub.com/U0A9B38F413/CompilerPlatform" alt="Advanced Compiler Services for .NET">
-	</a>
-</p>
 
 ### Project structure
 
@@ -198,7 +176,7 @@ Elapsed/
 │
 ├── eng/                                  # Build pipelines and versioning
 ├── src/                                  # Source code
-│  ├──app/                                # Platform-related source code
+│  ├──platforms/                          # Platform-related source code
 │  │  ├──Riverside.Elapsed.App/           # The main cross-platform app entrypoint
 │  │  └──Riverside.Elapsed.CommandLine/   # The Elapsed CLI programme
 │  ├──core/                               # Shared source code used by multiple projects
@@ -211,42 +189,6 @@ Elapsed/
 ├── LICENSE
 └── README.md
 ```
-
-> The following categories are a mapping of features and source APIs that the Lapse website project has to their new names in Elapsed.
-> If you're familiar with the Lapse codebase, you should use this as a reference to know where to look for to find a specific feature.
-
-#### UI pages
-
-- `admin/`: (N/A)
-- `api/` (N/A)
-- `developer/`: (N/A)
-- `draft/`: `DraftTimelapsePage`
-- `oauth/` (N/A)
-- `timelapse/`: `NewTimelapsePage`, `TimelapsePage`
-- `user/`: `UserPage`
-- `_app`: `App`
-- `_document`: `Shell`
-- `auth`: `LoginPage`
-- `index`: `MainPage`
-- `migrate` (N/A)
-- `update-browser` (N/A)
-
-#### UI controls
-
-- `Alert`: `[MUXC]InfoBar`
-- `Badge`: `[MUXC]InfoBadge`
-- `Bullet`
-- `Button`: `[MUXC]Button`
-- `Checkbox`: `[MUXC]CheckBox`
-- `Code`: `[WCT]MarkdownTextBlock`
-- `Dropdown`: `[MUXC]ComboBox`
-- `DropDownInput`: `[MUXC]ComboBox`
-- `InputField`: `[MUXC]TextBox`
-- `Link`: `[MUXC]HyperlinkButton` (or embedded)
-- `PillControlButton`
-- `Skeleton`: `[FluentHub]Shimmer`
-- `TextInput`: `[MUXC]TextBox`
-- `TextareaInput`
 
 ### Project design choices
 
@@ -265,6 +207,9 @@ The code style convention of Elapsed is generally not very strict, but these are
 - use file-scoped namespaces
 
 If you want a more detailed understanding of my C# coding conventions, see the [example code style document I made](https://gist.github.com/Lamparter/512ed5f2bdd4174376eb7fbe4460c2b2).
+
+I also recommend formatting issues & PR names [like how the Files project does](https://github.com/files-community/Files/commits/main) with a capitalised prefix such as "Code Quality:", "Fix:", "Feature:", "Docs:", "Bug:" etc. followed by a concise yet descriptive title.
+Commit names should also follow the same convention but do not need a prefix. For a good example of this, take a look at any of the commit names for Git commits I've already made in the repo.
 
 #### Versioning practices
 
@@ -332,7 +277,7 @@ It is recommended to use [Uno Platform Studio](https://platform.uno/hot-design) 
 
 ### Dependencies
 
-Elapsed is made possible by work from [open source contributors](https://github.com/Lamparter/Elapsed/graphs/contributors), members of the [`#elapsed`](https://hackclub.enterprise.slack.com/archives/C0AKTBFM0BU) channel on Slack, [contributors to the Lapse project](https://github.com/hackclub/lapse/graphs/contributors), and the lead developers [`@Lamparter`](https://github.com/Lamparter) and [`@ascpixi`](https://github.com/ascpixi).
+Elapsed is made possible by work from [open source contributors](https://github.com/hackclub/elapsed/graphs/contributors), [contributors to the Lapse project](https://github.com/hackclub/lapse/graphs/contributors), and the lead developers [`@Lamparter`](https://github.com/Lamparter) and [`@ascpixi`](https://github.com/ascpixi).
 Elapse also relies on the following open source projects to function:
 
 - [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows)
@@ -352,7 +297,7 @@ This project is **free, open source software** licensed under the MIT License.
 Elapsed is a Hack Club project, made by teenagers, for teenagers.
 There are no plans to make Elapsed a paid app.
 
-Please contact `@Lamparter` on Slack if you have legal questions.
+As the HQ sponsor, `@ascpixi` is reponsible for the Lapse project. Please contact him for legal questions.
 
 ---
 

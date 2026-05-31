@@ -7,7 +7,7 @@
 		<Copyright>Copyright (c) 2026 Lamparter</Copyright>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>PackageLogo.png</PackageIcon>
-		<RepositoryUrl>https://github.com/Lamparter/Elapsed</RepositoryUrl>
+		<RepositoryUrl>https://github.com/hackclub/elapsed</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>lapse; timelapse; elapsed; uno; unoplatform; windows; android; linux; macos; iphone; hackclub; riverside</PackageTags>
 		<Description>Elapsed is Hack Club's new timelapse tracking tool and media sharing platform.</Description>

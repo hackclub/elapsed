@@ -9,6 +9,7 @@
 .vercel
 Riverside.Elapsed.json
 *.lscache
+.wakatime-project
 
 # User-specific files
 *.rsuser

@@ -1,0 +1,6 @@
+{
+	"IndentWithTabs": true,
+	"CommentPadding": 1,
+	"EnableMarkupExtensionFormatting": true,
+	"NoNewLineMarkupExtensions": "x:Bind, Binding, StaticResource"
+}

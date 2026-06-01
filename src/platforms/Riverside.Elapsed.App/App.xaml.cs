@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Riverside.Elapsed.App.Services.Recording;
 using Riverside.Elapsed.App.ViewModels;
 using Uno.Resizetizer;
 
@@ -12,7 +13,6 @@ public partial class App : Application
 	}
 
 	protected Window? MainWindow { get; private set; }
-	protected IHost? Host { get; private set; }
 
 	[SuppressMessage("Trimming", "IL2026", Justification = "Uno app builder usage is trim-safe for configured features.")]
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -46,12 +46,22 @@ public partial class App : Application
 #endif
 		MainWindow.SetWindowIcon();
 
-		Host = await builder.NavigateAsync<Shell>(initialNavigate: async (services, navigator) =>
+#if HAS_MEDIA_RECORDING
+		IRecordingFacade recording = OperatingSystem.IsWindows()
+			? new WindowsRecordingFacade()
+			: new NoOpRecordingFacade();
+#else
+		IRecordingFacade recording = new NoOpRecordingFacade();
+#endif
+
+		MainWindow.Content = new RecordingPage
 		{
 			//var authService = services.GetRequiredService<ILapseAuthService>();
 			//await authService.TryRestoreSessionAsync();
 			await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
-		});
+			DataContext = new RecordingViewModel(recording)
+		};
+		MainWindow.Activate();
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

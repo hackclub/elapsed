@@ -1,3 +1,4 @@
+#if false
 using System.Collections.ObjectModel;
 using Riverside.Elapsed.App.Models.Timelapses.Local;
 using Riverside.Elapsed.App.Services.Drafts;
@@ -132,3 +133,5 @@ public sealed partial class DraftsViewModel : ObservableObject
 			data: new DraftListItem(localDraftId));
 	}
 }
+
+#endif

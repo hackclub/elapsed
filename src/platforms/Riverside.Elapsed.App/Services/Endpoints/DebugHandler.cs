@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Services.Endpoints;
 
 internal class DebugHttpHandler : DelegatingHandler
@@ -42,3 +43,5 @@ internal class DebugHttpHandler : DelegatingHandler
 		return response;
 	}
 }
+
+#endif

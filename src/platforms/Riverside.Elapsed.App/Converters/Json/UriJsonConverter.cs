@@ -1,3 +1,4 @@
+#if false
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -19,3 +20,5 @@ public sealed class UriJsonConverter : JsonConverter<Uri>
 		writer.WriteStringValue(value.ToString());
 	}
 }
+
+#endif

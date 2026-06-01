@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Timelapses.Local;
 
 namespace Riverside.Elapsed.App.Services.Drafts;
@@ -10,3 +11,5 @@ public interface ILocalDraftRepository
 	Task SaveDraftAsync(LocalDraft draft, CancellationToken ct = default);
 	Task DeleteDraftAsync(Guid localDraftId, CancellationToken ct = default);
 }
+
+#endif

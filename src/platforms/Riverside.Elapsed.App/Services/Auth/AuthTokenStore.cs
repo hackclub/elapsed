@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Auth;
 using Riverside.Elapsed.App.Services.Storage;
 
@@ -29,3 +30,5 @@ public sealed class AuthTokenStore(ILocalJsonStore store) : IAuthTokenStore
 		await store.DeleteAsync(TokenPath, cancellationToken);
 	}
 }
+
+#endif

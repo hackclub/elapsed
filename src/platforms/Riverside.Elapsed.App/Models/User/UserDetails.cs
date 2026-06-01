@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.User;
 
 public sealed class UserDetails
@@ -12,3 +13,5 @@ public sealed class UserDetails
 	public string? HackatimeId { get; set; }
 	public string? SlackId { get; set; }
 }
+
+#endif

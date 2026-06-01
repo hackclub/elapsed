@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Admin;
 
 public enum EntityType
@@ -8,3 +9,5 @@ public enum EntityType
 	DraftTimelapse,
 	LegacyTimelapse,
 }
+
+#endif

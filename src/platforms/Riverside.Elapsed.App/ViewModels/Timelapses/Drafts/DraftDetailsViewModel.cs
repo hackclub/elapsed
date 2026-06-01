@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Timelapses.Local;
 using Riverside.Elapsed.App.Services.Drafts;
 
@@ -161,3 +162,5 @@ public sealed partial class DraftDetailsViewModel : ObservableObject
 		}, token);
 	}
 }
+
+#endif

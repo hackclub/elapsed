@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.ViewModels;
 
 /// <summary>
@@ -20,3 +21,5 @@ public sealed class CommentViewModel
 	/// <summary>Gets the relative posted time (e.g. "3 days ago").</summary>
 	public string PostedAgo { get; init; } = string.Empty;
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses.Local;
 
 public class DraftPipelineState
@@ -18,3 +19,5 @@ public class DraftPipelineState
 	public double Progress { get; init; }
 	public string? LastError { get; init; }
 }
+
+#endif

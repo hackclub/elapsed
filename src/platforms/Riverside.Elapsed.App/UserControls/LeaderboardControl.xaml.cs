@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.UserControls;
 
 public sealed partial class LeaderboardControl : UserControl
@@ -7,3 +8,5 @@ public sealed partial class LeaderboardControl : UserControl
 		this.InitializeComponent();
 	}
 }
+
+#endif

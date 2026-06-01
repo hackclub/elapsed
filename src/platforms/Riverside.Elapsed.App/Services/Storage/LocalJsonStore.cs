@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Services.Storage;
 
 public sealed class LocalJsonStore(ISerializer serializer) : ILocalJsonStore
@@ -64,3 +65,5 @@ public sealed class LocalJsonStore(ISerializer serializer) : ILocalJsonStore
 		File.Move(tmp, path);
 	}
 }
+
+#endif

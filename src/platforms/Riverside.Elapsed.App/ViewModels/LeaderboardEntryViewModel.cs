@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Global;
 
 namespace Riverside.Elapsed.App.ViewModels;
@@ -38,3 +39,5 @@ public sealed class LeaderboardEntryViewModel
 		};
 	}
 }
+
+#endif

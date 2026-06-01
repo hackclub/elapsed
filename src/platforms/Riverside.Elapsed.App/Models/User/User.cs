@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.User;
 
 public class User
@@ -50,3 +51,5 @@ public class User
 		return details is not null ? FromDetails(details) : user;
 	}
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Admin;
 
 public sealed class AdminListResponse
@@ -8,3 +9,5 @@ public sealed class AdminListResponse
 	public long Page { get; set; }
 	public long PageSize { get; set; }
 }
+
+#endif

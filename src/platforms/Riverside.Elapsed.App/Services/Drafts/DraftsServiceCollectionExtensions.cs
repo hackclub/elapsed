@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Services.Drafts;
 
 namespace Riverside.Elapsed.App.Extensions;
@@ -10,3 +11,5 @@ public static class DraftsServiceCollectionExtensions
 		return services;
 	}
 }
+
+#endif

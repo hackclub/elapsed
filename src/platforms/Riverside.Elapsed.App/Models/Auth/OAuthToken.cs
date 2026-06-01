@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Auth;
 
 public sealed class OAuthToken
@@ -8,3 +9,5 @@ public sealed class OAuthToken
 	public string Scope { get; set; } = string.Empty;
 	public string? RefreshToken { get; set; }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,3 +30,5 @@ public sealed class TimeSpanSecondsJsonConverter : JsonConverter<TimeSpan>
 		writer.WriteNumberValue(value.TotalSeconds);
 	}
 }
+
+#endif

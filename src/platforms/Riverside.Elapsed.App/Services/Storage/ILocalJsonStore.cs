@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Services.Storage;
 
 public interface ILocalJsonStore
@@ -7,3 +8,5 @@ public interface ILocalJsonStore
 	Task<bool> ExistsAsync(string relativePath, CancellationToken ct = default);
 	Task DeleteAsync(string relativePath, CancellationToken ct = default);
 }
+
+#endif

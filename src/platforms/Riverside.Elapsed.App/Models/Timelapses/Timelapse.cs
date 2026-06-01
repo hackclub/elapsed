@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
 public sealed class Timelapse
@@ -15,3 +16,5 @@ public sealed class Timelapse
 	public string? HackatimeProject { get; set; }
 	public string? SourceDraftId { get; set; }
 }
+
+#endif

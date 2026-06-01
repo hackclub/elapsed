@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class Shell : UserControl, IContentControlProvider
@@ -9,3 +10,4 @@ public sealed partial class Shell : UserControl, IContentControlProvider
 
 	public ContentControl ContentControl => Splash;
 }
+#endif

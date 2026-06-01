@@ -1,3 +1,4 @@
+#if false
 using System.Text.Json;
 
 namespace Riverside.Elapsed.App.Models.Admin;
@@ -10,3 +11,5 @@ public sealed class AdminListPage
 	public long Page { get; set; }
 	public long PageSize { get; set; }
 }
+
+#endif

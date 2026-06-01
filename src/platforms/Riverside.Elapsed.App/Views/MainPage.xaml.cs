@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class MainPage : Page
@@ -16,3 +17,5 @@ public sealed partial class MainPage : Page
 		}
 	}
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Developer;
 
 public sealed class OAuthGrant
@@ -9,3 +10,5 @@ public sealed class OAuthGrant
 	public DateTimeOffset CreatedAt { get; set; }
 	public DateTimeOffset? LastUsedAt { get; set; }
 }
+
+#endif

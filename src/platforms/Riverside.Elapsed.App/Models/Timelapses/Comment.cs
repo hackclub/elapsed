@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
 public sealed class Comment
@@ -7,3 +8,5 @@ public sealed class Comment
 	public User.User Author { get; set; } = new();
 	public DateTimeOffset CreatedAt { get; set; }
 }
+
+#endif

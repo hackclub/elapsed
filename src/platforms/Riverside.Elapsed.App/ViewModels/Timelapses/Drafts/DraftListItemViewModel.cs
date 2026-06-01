@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.ViewModels.Timelapses.Drafts;
 
 public sealed partial class DraftListItemViewModel
@@ -17,3 +18,5 @@ public sealed partial class DraftListItemViewModel
 		RemoteDraftTimelapseId = remoteDraftTimelapseId;
 	}
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses.Local;
 
 public sealed record LocalDraft
@@ -37,3 +38,5 @@ public sealed record LocalDraft
 		};
 	}
 }
+
+#endif

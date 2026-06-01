@@ -1,3 +1,4 @@
+#if false
 using System.Globalization;
 
 namespace Riverside.Elapsed.App.Services.Build;
@@ -28,3 +29,5 @@ public sealed class BuildInfoProvider : IBuildInfoProvider
 		};
 	}
 }
+
+#endif

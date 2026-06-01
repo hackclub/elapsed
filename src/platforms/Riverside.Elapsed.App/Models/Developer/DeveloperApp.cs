@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Developer;
 
 public sealed class DeveloperApp
@@ -14,3 +15,5 @@ public sealed class DeveloperApp
 	public DateTimeOffset CreatedAt { get; set; }
 	public User.User? CreatedBy { get; set; }
 }
+
+#endif

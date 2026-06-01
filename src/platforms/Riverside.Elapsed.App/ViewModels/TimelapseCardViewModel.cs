@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Timelapses;
 using TimelapseModel = Riverside.Elapsed.App.Models.Timelapses.Timelapse;
 
@@ -86,3 +87,5 @@ public sealed class TimelapseCardViewModel
 		return minutes == 1 ? "1 minute ago" : $"{minutes} minutes ago";
 	}
 }
+
+#endif

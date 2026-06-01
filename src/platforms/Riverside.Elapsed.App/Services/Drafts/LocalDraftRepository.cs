@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Timelapses.Local;
 using Riverside.Elapsed.App.Services.Storage;
 
@@ -55,3 +56,5 @@ public sealed class LocalDraftRepository(ILocalJsonStore store) : ILocalDraftRep
 		await store.WriteAsync(IndexPath, index with { Drafts = updated }, ct).ConfigureAwait(false);
 	}
 }
+
+#endif

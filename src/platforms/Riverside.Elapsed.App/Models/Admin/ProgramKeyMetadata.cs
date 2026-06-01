@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Admin;
 
 public sealed class ProgramKeyMetadata
@@ -12,3 +13,5 @@ public sealed class ProgramKeyMetadata
 	public DateTimeOffset? RevokedAt { get; set; }
 	public DateTimeOffset ExpiresAt { get; set; }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Admin;
 
 public sealed class AdminStats
@@ -6,3 +7,5 @@ public sealed class AdminStats
 	public long TotalProjects { get; set; }
 	public long TotalUsers { get; set; }
 }
+
+#endif

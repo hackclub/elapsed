@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Auth;
 
 namespace Riverside.Elapsed.App.Services.Auth;
@@ -11,3 +12,5 @@ public interface IAuthTokenStore
 	Task SetTokenAsync(OAuthToken token, CancellationToken cancellationToken = default);
 	Task ClearAsync(CancellationToken cancellationToken = default);
 }
+
+#endif

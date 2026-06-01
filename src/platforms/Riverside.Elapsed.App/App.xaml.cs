@@ -47,11 +47,22 @@ public partial class App : Application
 		MainWindow.SetWindowIcon();
 
 #if HAS_MEDIA_RECORDING
-		IRecordingFacade recording = OperatingSystem.IsWindows()
-			? new WindowsRecordingFacade()
-			: new NoOpRecordingFacade();
+		IRecordingFacade recording;
+		ICaptureSourceProvider sourceProvider;
+
+		if (OperatingSystem.IsWindows())
+		{
+			recording = new WindowsRecordingFacade();
+			sourceProvider = new WindowsCaptureSourceProvider();
+		}
+		else
+		{
+			recording = new NoOpRecordingFacade();
+			sourceProvider = new NoOpCaptureSourceProvider();
+		}
 #else
 		IRecordingFacade recording = new NoOpRecordingFacade();
+		ICaptureSourceProvider sourceProvider = new NoOpCaptureSourceProvider();
 #endif
 
 		MainWindow.Content = new RecordingPage
@@ -59,7 +70,7 @@ public partial class App : Application
 			//var authService = services.GetRequiredService<ILapseAuthService>();
 			//await authService.TryRestoreSessionAsync();
 			await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
-			DataContext = new RecordingViewModel(recording)
+			DataContext = new RecordingViewModel(recording, sourceProvider)
 		};
 		MainWindow.Activate();
 	}

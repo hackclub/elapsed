@@ -15,7 +15,6 @@
 			<!-- Converters -->
 			<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 			<converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
-			<converters:BoolToToggleColorConverter x:Key="BoolToToggleColorConverter" />
 			<converters:NullToCollapsedConverter x:Key="NullToCollapsedConverter" />
 			<converters:BoolToPausedRecordingLabelConverter x:Key="BoolToPausedRecordingLabelConverter" />
 

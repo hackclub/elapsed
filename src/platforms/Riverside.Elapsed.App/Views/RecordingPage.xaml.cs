@@ -5,10 +5,12 @@ namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class RecordingPage : Page
 {
-	private const int CompactWidth = 340;
-	private const int CompactHeight = 460;
-	private const int ExpandedWidth = 800;
-	private const int ExpandedHeight = 460;
+	private const int CompactWidth = 380;
+	private const int CompactHeight = 520;
+	private const int ExpandedWidth = 840;
+	private const int ExpandedHeight = 520;
+
+	private Border? _selectedCard;
 
 	public RecordingPage()
 	{
@@ -28,6 +30,7 @@ public sealed partial class RecordingPage : Page
 
 			ScreenRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Screen;
 			WindowRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Window;
+			CameraRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Camera;
 		}
 	}
 
@@ -38,6 +41,25 @@ public sealed partial class RecordingPage : Page
 			vm.RecordingStarted -= OnRecordingStarted;
 			vm.RecordingStopped -= OnRecordingStopped;
 		}
+	}
+
+	private void OnSourceCardPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+	{
+		if (sender is not Border card)
+			return;
+
+		if (card.DataContext is CaptureSource source && DataContext is RecordingViewModel vm)
+			vm.SelectedSource = source;
+
+		if (_selectedCard is not null)
+			_selectedCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Resources["ControlStrokeColorDefaultBrush"]
+				?? Application.Current.Resources["ControlStrokeColorDefaultBrush"] as Microsoft.UI.Xaml.Media.Brush;
+
+		card.BorderBrush = Application.Current.Resources["AccentFillColorDefaultBrush"] as Microsoft.UI.Xaml.Media.Brush;
+		card.BorderThickness = new Thickness(2);
+		if (_selectedCard is not null && _selectedCard != card)
+			_selectedCard.BorderThickness = new Thickness(1);
+		_selectedCard = card;
 	}
 
 	private void OnRecordingStarted(object? sender, EventArgs e)

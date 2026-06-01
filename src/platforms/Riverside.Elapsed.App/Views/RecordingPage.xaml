@@ -16,17 +16,21 @@
 		<!-- Setup / controls panel (always visible) -->
 		<Border
 			Grid.Column="0"
-			Width="340"
+			Width="380"
 			Padding="20"
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 			<Grid>
 				<!-- Setup state -->
-				<StackPanel
-					Spacing="16"
-					Visibility="{Binding IsInSetup, Converter={StaticResource BoolToVisibilityConverter}}">
+				<Grid Visibility="{Binding IsInSetup, Converter={StaticResource BoolToVisibilityConverter}}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
 
 					<!-- Header: brand + settings -->
-					<Grid>
+					<Grid Grid.Row="0" Margin="0,0,0,16">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
@@ -59,12 +63,15 @@
 						</Button>
 					</Grid>
 
-					<!-- Source kind toggle: Screen / Window -->
+					<!-- Source kind toggle: Screen / Window / Camera -->
 					<Grid
+						Grid.Row="1"
 						Height="36"
+						Margin="0,0,0,12"
 						Background="{ThemeResource ControlFillColorSecondaryBrush}"
 						CornerRadius="8">
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
@@ -85,100 +92,79 @@
 							Content="Window"
 							GroupName="SourceKind"
 							Style="{StaticResource SegmentedToggleStyle}" />
+						<RadioButton
+							x:Name="CameraRadio"
+							Grid.Column="2"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+							Content="Camera"
+							GroupName="SourceKind"
+							Style="{StaticResource SegmentedToggleStyle}" />
 					</Grid>
 
-					<!-- Camera selector -->
-					<StackPanel Spacing="4">
-						<TextBlock
-							FontSize="12"
-							Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-							Text="Camera" />
-						<Border
-							Padding="12,10"
-							Background="{ThemeResource ControlFillColorDefaultBrush}"
-							BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-							BorderThickness="1"
-							CornerRadius="8">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-								<FontIcon
-									Grid.Column="0"
-									Margin="0,0,10,0"
-									FontSize="16"
-									Glyph="&#xE714;"
-									Opacity="0.6"
-									VerticalAlignment="Center" />
-								<TextBlock
-									Grid.Column="1"
-									VerticalAlignment="Center"
-									Text="{Binding SelectedCamera.Name, FallbackValue='No Camera'}"
-									TextTrimming="CharacterEllipsis" />
-								<Button
-									Grid.Column="2"
-									MinWidth="0"
-									Padding="8,4"
-									Background="Transparent"
-									BorderThickness="0"
-									Command="{Binding ToggleCameraCommand}"
-									FontSize="12"
-									FontWeight="SemiBold"
-									Foreground="{Binding IsCameraEnabled, Converter={StaticResource BoolToToggleColorConverter}}"
-									Content="{Binding CameraToggleLabel}" />
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<!-- Microphone selector -->
-					<StackPanel Spacing="4">
-						<TextBlock
-							FontSize="12"
-							Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-							Text="Microphone" />
-						<Border
-							Padding="12,10"
-							Background="{ThemeResource ControlFillColorDefaultBrush}"
-							BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-							BorderThickness="1"
-							CornerRadius="8">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-								<FontIcon
-									Grid.Column="0"
-									Margin="0,0,10,0"
-									FontSize="16"
-									Glyph="&#xE720;"
-									Opacity="0.6"
-									VerticalAlignment="Center" />
-								<TextBlock
-									Grid.Column="1"
-									VerticalAlignment="Center"
-									Text="{Binding SelectedMicrophone.Name, FallbackValue='No Audio'}"
-									TextTrimming="CharacterEllipsis" />
-								<Button
-									Grid.Column="2"
-									MinWidth="0"
-									Padding="8,4"
-									Background="Transparent"
-									BorderThickness="0"
-									Command="{Binding ToggleMicrophoneCommand}"
-									FontSize="12"
-									FontWeight="SemiBold"
-									Foreground="{Binding IsMicrophoneEnabled, Converter={StaticResource BoolToToggleColorConverter}}"
-									Content="{Binding MicrophoneToggleLabel}" />
-							</Grid>
-						</Border>
-					</StackPanel>
+					<!-- Source grid -->
+					<ScrollViewer Grid.Row="2" Margin="0,0,0,16">
+						<ItemsRepeater ItemsSource="{Binding CurrentSources}">
+							<ItemsRepeater.Layout>
+								<UniformGridLayout
+									MinItemWidth="158"
+									MinItemHeight="148"
+									MinColumnSpacing="6"
+									MinRowSpacing="6" />
+							</ItemsRepeater.Layout>
+							<ItemsRepeater.ItemTemplate>
+								<DataTemplate>
+									<Border
+										CornerRadius="8"
+										Background="{ThemeResource ControlFillColorDefaultBrush}"
+										BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+										BorderThickness="1"
+										PointerPressed="OnSourceCardPressed">
+										<Grid>
+											<Grid.RowDefinitions>
+												<RowDefinition Height="88" />
+												<RowDefinition Height="*" />
+											</Grid.RowDefinitions>
+											<Border
+												Grid.Row="0"
+												CornerRadius="7,7,0,0"
+												Background="{ThemeResource ControlFillColorTertiaryBrush}">
+												<Image
+													Source="{Binding Thumbnail}"
+													Stretch="UniformToFill"
+													HorizontalAlignment="Center"
+													VerticalAlignment="Center" />
+											</Border>
+											<StackPanel Grid.Row="1" Padding="8,6,8,6" Spacing="1">
+												<TextBlock
+													FontSize="11"
+													FontWeight="Bold"
+													MaxLines="1"
+													Text="{Binding Name}"
+													TextTrimming="CharacterEllipsis" />
+												<TextBlock
+													FontSize="10"
+													Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+													MaxLines="1"
+													Text="{Binding Description}"
+													TextTrimming="CharacterEllipsis"
+													Visibility="{Binding Description, Converter={StaticResource NullToCollapsedConverter}}" />
+												<TextBlock
+													FontSize="10"
+													Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+													Text="{Binding Resolution}"
+													Visibility="{Binding Resolution, Converter={StaticResource NullToCollapsedConverter}}" />
+											</StackPanel>
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</ItemsRepeater.ItemTemplate>
+						</ItemsRepeater>
+					</ScrollViewer>
 
 					<!-- Start recording button -->
 					<Button
+						Grid.Row="3"
 						Height="44"
 						HorizontalAlignment="Stretch"
 						Command="{Binding StartRecordingCommand}"
@@ -193,15 +179,7 @@
 								VerticalAlignment="Center" />
 						</StackPanel>
 					</Button>
-
-					<!-- Open on web link -->
-					<HyperlinkButton
-						HorizontalAlignment="Center"
-						Content="Open Elapsed on Web"
-						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-						FontSize="12"
-						NavigateUri="https://lapse.hackclub.com" />
-				</StackPanel>
+				</Grid>
 
 				<!-- Active recording state -->
 				<StackPanel
@@ -285,7 +263,13 @@
 					VerticalAlignment="Center"
 					FontSize="14"
 					Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-					Text="Preview" />
+					Text="No preview available" />
+				<Image
+					Source="{Binding PreviewImage}"
+					Stretch="Uniform"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="16" />
 			</Grid>
 		</Border>
 	</Grid>

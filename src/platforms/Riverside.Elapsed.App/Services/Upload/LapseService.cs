@@ -55,12 +55,12 @@ public sealed class LapseService : IDisposable
 		await SaveJsonAsync(AuthPath, _auth, ct);
 	}
 
-	public async Task SignOutAsync(CancellationToken ct = default)
+	public Task SignOutAsync(CancellationToken ct = default)
 	{
 		_auth = null;
 		if (File.Exists(AuthPath))
 			File.Delete(AuthPath);
-		await Task.CompletedTask;
+		return Task.CompletedTask;
 	}
 
 	public async Task<UserProfile?> GetCurrentUserAsync(CancellationToken ct = default)
@@ -448,8 +448,7 @@ public sealed class LapseService : IDisposable
 	private static (string verifier, string challenge) GeneratePkceChallenge()
 	{
 		var verifier = GenerateRandomString(128);
-		using var sha256 = SHA256.Create();
-		var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(verifier));
+		var challengeBytes = SHA256.HashData(Encoding.UTF8.GetBytes(verifier));
 		var challenge = Convert.ToBase64String(challengeBytes)
 			.Replace("+", "-")
 			.Replace("/", "_")
@@ -462,7 +461,10 @@ public sealed class LapseService : IDisposable
 		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		var buf = new byte[length];
 		RandomNumberGenerator.Fill(buf);
-		return new string(buf.Select(b => chars[b % chars.Length]).ToArray());
+		var result = new char[length];
+		for (int i = 0; i < length; i++)
+			result[i] = chars[buf[i] % chars.Length];
+		return new string(result);
 	}
 
 	private static void SendListenerResponse(HttpListenerResponse response, int statusCode, string body)

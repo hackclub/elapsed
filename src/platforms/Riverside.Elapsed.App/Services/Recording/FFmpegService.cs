@@ -47,16 +47,16 @@ internal static partial class FFmpegService
 			"or place the ffmpeg binary next to the application executable.");
 	}
 
-	public static async Task<bool> IsAvailableAsync()
+	public static Task<bool> IsAvailableAsync()
 	{
 		try
 		{
 			GetBinaryPath();
-			return true;
+			return Task.FromResult(true);
 		}
 		catch
 		{
-			return false;
+			return Task.FromResult(false);
 		}
 	}
 

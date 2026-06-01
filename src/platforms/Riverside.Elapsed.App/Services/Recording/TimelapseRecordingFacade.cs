@@ -112,7 +112,7 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 					_cameraProcess.Kill();
 				await _cameraProcess.WaitForExitAsync(cancellationToken);
 			}
-			catch { }
+			catch (Exception) { }
 			_cameraProcess.Dispose();
 			_cameraProcess = null;
 		}
@@ -145,11 +145,11 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 			await FFmpegService.EncodeFramesToVideoAsync(
 				_framesDirectory, mp4Path, frameRate: 24.0, ct: cancellationToken);
 
-			try { Directory.Delete(_framesDirectory, recursive: true); } catch { }
+			try { Directory.Delete(_framesDirectory, recursive: true); } catch (Exception) { }
 		}
 		else if (_framesDirectory is not null)
 		{
-			try { Directory.Delete(_framesDirectory, recursive: true); } catch { }
+			try { Directory.Delete(_framesDirectory, recursive: true); } catch (Exception) { }
 		}
 
 		_framesDirectory = null;
@@ -181,7 +181,7 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 						consecutiveFailures++;
 					}
 				}
-				catch
+				catch (Exception)
 				{
 					consecutiveFailures++;
 				}

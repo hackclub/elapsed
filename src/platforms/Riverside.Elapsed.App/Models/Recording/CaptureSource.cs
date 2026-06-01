@@ -74,6 +74,7 @@ public sealed class CaptureSource : INotifyPropertyChanged
 	private void SetField<T>(ref T field, T value, [CallerMemberName] string? name = null)
 	{
 		if (EqualityComparer<T>.Default.Equals(field, value)) return;
+
 		field = value;
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}

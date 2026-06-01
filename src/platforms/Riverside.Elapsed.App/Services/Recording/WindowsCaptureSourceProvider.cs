@@ -251,7 +251,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 
 	private List<(CaptureSource source, byte[]? pixels, int tw, int th)> EnumerateScreens()
 	{
-		var results = new List<(CaptureSource, byte[]?, int, int)>();
+		List<(CaptureSource, byte[]?, int, int)> results = [];
 		int index = 0;
 
 		Native.MonitorEnumProc callback = (nint hMonitor, nint hdcMonitor, ref Native.RECT lprcMonitor, nint dwData) =>
@@ -289,7 +289,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 
 	private List<(CaptureSource source, byte[]? pixels, int tw, int th)> EnumerateWindows()
 	{
-		var results = new List<(CaptureSource, byte[]?, int, int)>();
+		List<(CaptureSource, byte[]?, int, int)> results = [];
 		int ownPid = Environment.ProcessId;
 
 		Native.EnumWindowsProc callback = (nint hWnd, nint lParam) =>
@@ -316,7 +316,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 			if ((int)pid == ownPid)
 				return true;
 
-			string processName = "";
+			var processName = "";
 			try
 			{
 				using var proc = Process.GetProcessById((int)pid);
@@ -363,7 +363,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		try
 		{
 			var cameras = await FFmpegService.EnumerateCamerasAsync();
-			var results = new List<CaptureSource>();
+			List<CaptureSource> results = [];
 
 			foreach (var (id, name) in cameras)
 			{
@@ -387,14 +387,14 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 						source.Thumbnail = new BitmapImage(new Uri(thumbPath));
 					}
 				}
-				catch { }
+				catch (Exception) { }
 
 				results.Add(source);
 			}
 
 			return results;
 		}
-		catch
+		catch (Exception)
 		{
 			return [];
 		}
@@ -489,7 +489,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 			File.WriteAllBytes(tempPath, bmpData);
 			return new BitmapImage(new Uri(tempPath));
 		}
-		catch
+		catch (Exception)
 		{
 			return null;
 		}
@@ -566,7 +566,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 					Native.DeleteObject(iconInfo.hbmMask);
 			}
 		}
-		catch
+		catch (Exception)
 		{
 			return null;
 		}

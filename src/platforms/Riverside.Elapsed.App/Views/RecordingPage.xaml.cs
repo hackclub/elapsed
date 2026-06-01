@@ -52,16 +52,23 @@ public sealed partial class RecordingPage : Page
 			return;
 
 		if (card.DataContext is CaptureSource source && DataContext is RecordingViewModel vm)
+		{
 			vm.SelectedSource = source;
+		}
 
 		if (_selectedCard is not null)
+		{
 			_selectedCard.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Resources["ControlStrokeColorDefaultBrush"]
 				?? Application.Current.Resources["ControlStrokeColorDefaultBrush"] as Microsoft.UI.Xaml.Media.Brush;
+		}
 
 		card.BorderBrush = Application.Current.Resources["AccentFillColorDefaultBrush"] as Microsoft.UI.Xaml.Media.Brush;
 		card.BorderThickness = new Thickness(2);
 		if (_selectedCard is not null && _selectedCard != card)
+		{
 			_selectedCard.BorderThickness = new Thickness(1);
+		}
+
 		_selectedCard = card;
 	}
 

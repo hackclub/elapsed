@@ -148,7 +148,7 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 
 	private static List<CaptureSource> EnumerateScreens()
 	{
-		var results = new List<CaptureSource>();
+		List<CaptureSource> results = [];
 		var displays = new uint[16];
 		CG.CGGetActiveDisplayList(16, displays, out uint count);
 
@@ -173,7 +173,7 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 
 	private static List<CaptureSource> EnumerateWindows()
 	{
-		var results = new List<CaptureSource>();
+		List<CaptureSource> results = [];
 		int ownPid = Environment.ProcessId;
 
 		var windowList = CG.CGWindowListCopyWindowInfo(
@@ -230,7 +230,7 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 		try
 		{
 			var cameras = await FFmpegService.EnumerateCamerasAsync();
-			var results = new List<CaptureSource>();
+			List<CaptureSource> results = [];
 
 			foreach (var (id, name) in cameras)
 			{
@@ -254,14 +254,14 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 						source.Thumbnail = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(thumbPath));
 					}
 				}
-				catch { }
+				catch (Exception) { }
 
 				results.Add(source);
 			}
 
 			return results;
 		}
-		catch
+		catch (Exception)
 		{
 			return [];
 		}

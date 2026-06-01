@@ -54,7 +54,7 @@ internal static partial class FFmpegService
 			GetBinaryPath();
 			return Task.FromResult(true);
 		}
-		catch
+		catch (Exception)
 		{
 			return Task.FromResult(false);
 		}
@@ -94,7 +94,7 @@ internal static partial class FFmpegService
 		};
 
 		using var proc = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start FFmpeg.");
-		using var reg = ct.Register(() => { try { proc.Kill(); } catch { } });
+		using var reg = ct.Register(() => { try { proc.Kill(); } catch (Exception) { } });
 
 		var stderr = new StringBuilder();
 		proc.ErrorDataReceived += (_, e) =>
@@ -193,7 +193,7 @@ internal static partial class FFmpegService
 
 		using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 		cts.CancelAfter(TimeSpan.FromSeconds(10));
-		using var reg = cts.Token.Register(() => { try { proc.Kill(); } catch { } });
+		using var reg = cts.Token.Register(() => { try { proc.Kill(); } catch (Exception) { } });
 
 		await proc.WaitForExitAsync(cts.Token);
 		return proc.ExitCode == 0 && File.Exists(outputPath) ? outputPath : null;
@@ -233,7 +233,7 @@ internal static partial class FFmpegService
 
 	private static List<(string id, string name)> ParseCameraDevices(string stderr, string inputFormat)
 	{
-		var results = new List<(string, string)>();
+		List<(string, string)> results = [];
 
 		if (inputFormat == "dshow")
 		{

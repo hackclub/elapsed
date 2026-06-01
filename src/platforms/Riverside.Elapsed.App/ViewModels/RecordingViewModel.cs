@@ -174,7 +174,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 				ClearUserState();
 			}
 		}
-		catch
+		catch (Exception)
 		{
 			ClearUserState();
 		}
@@ -272,11 +272,11 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		try
 		{
 			var fresh = await _sourceProvider.GetSourcesAsync(SelectedSourceKind);
-			var existingById = new Dictionary<string, CaptureSource>();
+			Dictionary<string, CaptureSource> existingById = [];
 			foreach (var s in CurrentSources)
 				existingById[s.Id] = s;
 
-			var freshIds = new HashSet<string>();
+			HashSet<string> freshIds = [];
 			foreach (var src in fresh)
 			{
 				freshIds.Add(src.Id);
@@ -286,7 +286,9 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 					existing.Description = src.Description;
 					existing.Resolution = src.Resolution;
 					if (src.Icon is not null)
+					{
 						existing.Icon = src.Icon;
+					}
 				}
 				else
 				{
@@ -299,7 +301,9 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 				if (!freshIds.Contains(CurrentSources[i].Id))
 				{
 					if (CurrentSources[i] == SelectedSource)
+					{
 						SelectedSource = null;
+					}
 					CurrentSources.RemoveAt(i);
 				}
 			}
@@ -310,10 +314,10 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 				{
 					await _sourceProvider.RefreshThumbnailAsync(source, ThumbMaxWidth, ThumbMaxHeight);
 				}
-				catch { }
+				catch (Exception) { }
 			}
 		}
-		catch { }
+		catch (Exception) { }
 		finally
 		{
 			_sourceRefreshing = false;
@@ -376,7 +380,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 			if (frame is not null)
 				BlitPreview(frame);
 		}
-		catch { }
+		catch (Exception) { }
 		finally
 		{
 			_previewUpdating = false;
@@ -459,7 +463,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 				{
 					thumbnailBytes = await _sourceProvider.CapturePreviewBytesAsync(SelectedSource, 640, 480);
 				}
-				catch { }
+				catch (Exception) { }
 			}
 
 			_timer?.Stop();

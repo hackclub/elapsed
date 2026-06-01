@@ -122,7 +122,7 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 
 	private static List<CaptureSource> EnumerateScreens()
 	{
-		var results = new List<CaptureSource>();
+		List<CaptureSource> results = [];
 		var display = X11.XOpenDisplay(null);
 		if (display == nint.Zero) return results;
 
@@ -153,7 +153,7 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 
 	private static List<CaptureSource> EnumerateWindows()
 	{
-		var results = new List<CaptureSource>();
+		List<CaptureSource> results = [];
 		var display = X11.XOpenDisplay(null);
 		if (display == nint.Zero) return results;
 
@@ -259,7 +259,7 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 		try
 		{
 			var cameras = await FFmpegService.EnumerateCamerasAsync();
-			var results = new List<CaptureSource>();
+			List<CaptureSource> results = [];
 
 			foreach (var (id, name) in cameras)
 			{
@@ -283,14 +283,14 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 						source.Thumbnail = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(thumbPath));
 					}
 				}
-				catch { }
+				catch (Exception) { }
 
 				results.Add(source);
 			}
 
 			return results;
 		}
-		catch
+		catch (Exception)
 		{
 			return [];
 		}

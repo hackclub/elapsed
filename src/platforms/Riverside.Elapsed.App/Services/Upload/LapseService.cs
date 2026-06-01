@@ -119,7 +119,7 @@ public sealed class LapseService : IDisposable
 			: ComputeEncryptedSize(1);
 
 		if (thumbnailBytes.Length == 0)
-			thumbnailBytes = new byte[] { 0 };
+			thumbnailBytes = [0];
 
 		var snapshots = GenerateSnapshots(duration);
 
@@ -162,7 +162,7 @@ public sealed class LapseService : IDisposable
 		var changes = new Dictionary<string, object>
 		{
 			["name"] = name,
-			["editList"] = Array.Empty<object>(),
+			["editList"] = (object[])[],
 		};
 		if (description is not null)
 			changes["description"] = description;
@@ -220,7 +220,7 @@ public sealed class LapseService : IDisposable
 		{
 			Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
 		}
-		catch { }
+		catch (Exception) { }
 	}
 
 	private async Task EnsureAuthenticatedAsync(CancellationToken ct)
@@ -284,7 +284,7 @@ public sealed class LapseService : IDisposable
 		{
 			Process.Start(new ProcessStartInfo { FileName = authorizeUrl, UseShellExecute = true });
 		}
-		catch { }
+		catch (Exception) { }
 
 		using var listener = new HttpListener();
 		listener.Prefixes.Add("http://localhost:8765/");

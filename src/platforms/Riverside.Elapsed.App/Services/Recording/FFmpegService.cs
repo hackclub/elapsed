@@ -156,6 +156,49 @@ internal static partial class FFmpegService
 		return Process.Start(psi) ?? throw new InvalidOperationException("Failed to start FFmpeg camera capture.");
 	}
 
+	public static async Task<string?> GrabCameraFrameAsync(string deviceId, string outputPath, CancellationToken ct = default)
+	{
+		var ffmpeg = GetBinaryPath();
+		string inputFormat;
+		string inputDevice;
+
+		if (OperatingSystem.IsWindows())
+		{
+			inputFormat = "dshow";
+			inputDevice = $"video={deviceId}";
+		}
+		else if (OperatingSystem.IsMacOS())
+		{
+			inputFormat = "avfoundation";
+			inputDevice = deviceId;
+		}
+		else
+		{
+			inputFormat = "v4l2";
+			inputDevice = deviceId;
+		}
+
+		var args = $"-f {inputFormat} -i \"{inputDevice}\" -vframes 1 -y \"{outputPath}\"";
+		var psi = new ProcessStartInfo
+		{
+			FileName = ffmpeg,
+			Arguments = args,
+			UseShellExecute = false,
+			RedirectStandardError = true,
+			CreateNoWindow = true,
+		};
+
+		using var proc = Process.Start(psi);
+		if (proc is null) return null;
+
+		using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+		cts.CancelAfter(TimeSpan.FromSeconds(10));
+		using var reg = cts.Token.Register(() => { try { proc.Kill(); } catch { } });
+
+		await proc.WaitForExitAsync(cts.Token);
+		return proc.ExitCode == 0 && File.Exists(outputPath) ? outputPath : null;
+	}
+
 	public static async Task<List<(string id, string name)>> EnumerateCamerasAsync(CancellationToken ct = default)
 	{
 		var ffmpeg = GetBinaryPath();
@@ -194,21 +237,14 @@ internal static partial class FFmpegService
 
 		if (inputFormat == "dshow")
 		{
-			bool inVideo = false;
 			foreach (var line in stderr.Split('\n'))
 			{
-				if (line.Contains("DirectShow video devices"))
-					inVideo = true;
-				else if (line.Contains("DirectShow audio devices"))
-					break;
-				else if (inVideo)
+				if (!line.Contains("(video)")) continue;
+				var match = DshowDeviceRegex().Match(line);
+				if (match.Success)
 				{
-					var match = DshowDeviceRegex().Match(line);
-					if (match.Success)
-					{
-						var name = match.Groups[1].Value;
-						results.Add((name, name));
-					}
+					var name = match.Groups[1].Value;
+					results.Add((name, name));
 				}
 			}
 		}

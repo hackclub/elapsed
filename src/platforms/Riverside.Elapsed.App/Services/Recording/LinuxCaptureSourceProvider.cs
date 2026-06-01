@@ -252,12 +252,36 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 		try
 		{
 			var cameras = await FFmpegService.EnumerateCamerasAsync();
-			return cameras.ConvertAll(c => new CaptureSource
+			var results = new List<CaptureSource>();
+
+			foreach (var (id, name) in cameras)
 			{
-				Id = c.id,
-				Name = c.name,
-				Kind = CaptureSourceKind.Camera,
-			});
+				var source = new CaptureSource
+				{
+					Id = id,
+					Name = name,
+					Kind = CaptureSourceKind.Camera,
+				};
+
+				try
+				{
+					var thumbPath = Path.Combine(Path.GetTempPath(), $"elapsed-cam-{Guid.NewGuid():N}.jpg");
+					var grabbed = await FFmpegService.GrabCameraFrameAsync(id, thumbPath);
+					if (grabbed is not null)
+					{
+						using var codec = SkiaSharp.SKCodec.Create(thumbPath);
+						if (codec is not null)
+							source.Resolution = $"{codec.Info.Width}x{codec.Info.Height}";
+
+						source.Thumbnail = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(thumbPath));
+					}
+				}
+				catch { }
+
+				results.Add(source);
+			}
+
+			return results;
 		}
 		catch
 		{

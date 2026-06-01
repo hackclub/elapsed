@@ -9,14 +9,13 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition x:Name="ControlsColumn" Width="*" MinWidth="320" />
+			<ColumnDefinition x:Name="PreviewColumn" Width="0" />
 		</Grid.ColumnDefinitions>
 
 		<!-- Setup / controls panel (always visible) -->
 		<Border
 			Grid.Column="0"
-			Width="380"
 			Padding="20"
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 			<Grid>
@@ -41,11 +40,10 @@
 							Orientation="Horizontal"
 							Spacing="8"
 							VerticalAlignment="Center">
-							<Ellipse
+							<Image
 								Width="28"
 								Height="28"
-								Stroke="{ThemeResource AccentFillColorDefaultBrush}"
-								StrokeThickness="3" />
+								Source="ms-appx:///Assets/Icons/brand-icon.png" />
 							<TextBlock
 								FontSize="18"
 								FontWeight="SemiBold"
@@ -152,10 +150,11 @@
 					</Grid>
 
 					<!-- Source grid -->
-					<ScrollViewer Grid.Row="2" Margin="0,0,0,16">
+					<ScrollViewer x:Name="SourceScrollViewer" Grid.Row="2" Margin="0,0,0,16" SizeChanged="OnSourceScrollViewerSizeChanged">
 						<ItemsRepeater ItemsSource="{Binding CurrentSources}">
 							<ItemsRepeater.Layout>
 								<UniformGridLayout
+									x:Name="SourceGridLayout"
 									MinItemWidth="158"
 									MinItemHeight="148"
 									MinColumnSpacing="6"
@@ -171,8 +170,8 @@
 										PointerPressed="OnSourceCardPressed">
 										<Grid>
 											<Grid.RowDefinitions>
-												<RowDefinition Height="88" />
-												<RowDefinition Height="*" />
+												<RowDefinition Height="3*" />
+												<RowDefinition Height="Auto" />
 											</Grid.RowDefinitions>
 											<Border
 												Grid.Row="0"
@@ -185,12 +184,20 @@
 													VerticalAlignment="Center" />
 											</Border>
 											<StackPanel Grid.Row="1" Padding="8,6,8,6" Spacing="1">
-												<TextBlock
-													FontSize="11"
-													FontWeight="Bold"
-													MaxLines="1"
-													Text="{Binding Name}"
-													TextTrimming="CharacterEllipsis" />
+												<StackPanel Orientation="Horizontal" Spacing="4">
+													<Image
+														Source="{Binding Icon}"
+														Width="14"
+														Height="14"
+														VerticalAlignment="Center"
+														Visibility="{Binding Icon, Converter={StaticResource NullToCollapsedConverter}}" />
+													<TextBlock
+														FontSize="11"
+														FontWeight="Bold"
+														MaxLines="1"
+														Text="{Binding Name}"
+														TextTrimming="CharacterEllipsis" />
+												</StackPanel>
 												<TextBlock
 													FontSize="10"
 													Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -475,7 +482,7 @@
 		<!-- Preview panel (visible only during recording) -->
 		<Border
 			Grid.Column="1"
-			Width="460"
+			MinWidth="300"
 			Background="{ThemeResource ControlFillColorSecondaryBrush}"
 			BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
 			BorderThickness="1,0,0,0"

@@ -4,21 +4,24 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Elapsed.App.Models.Recording;
+using SkiaSharp;
 
 namespace Riverside.Elapsed.App.Services.Recording;
 
 public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 {
-	private const int ThumbMaxWidth = 220;
-	private const int ThumbMaxHeight = 140;
+	private const int ThumbMaxWidth = 480;
+	private const int ThumbMaxHeight = 300;
 
-	public Task<IReadOnlyList<CaptureSource>> GetSourcesAsync(CaptureSourceKind kind)
+	public async Task<IReadOnlyList<CaptureSource>> GetSourcesAsync(CaptureSourceKind kind)
 	{
+		if (kind == CaptureSourceKind.Camera)
+			return await EnumerateCamerasAsync();
+
 		var items = kind switch
 		{
 			CaptureSourceKind.Screen => EnumerateScreens(),
 			CaptureSourceKind.Window => EnumerateWindows(),
-			CaptureSourceKind.Camera => EnumerateCameras(),
 			_ => []
 		};
 
@@ -28,7 +31,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 				source.Thumbnail = CreateThumbnail(pixels, tw, th);
 		}
 
-		return Task.FromResult<IReadOnlyList<CaptureSource>>(items.ConvertAll(i => i.source));
+		return items.ConvertAll(i => i.source);
 	}
 
 	public async Task<Microsoft.UI.Xaml.Media.ImageSource?> CapturePreviewAsync(CaptureSource source, int maxWidth, int maxHeight)
@@ -291,6 +294,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 				Description = processName,
 				Resolution = hz > 0 ? $"{w}x{h} @ {hz} Hz" : $"{w}x{h}",
 				Kind = CaptureSourceKind.Window,
+				Icon = ExtractWindowIcon(hWnd),
 			}, pixels, tw, th));
 
 			return true;
@@ -301,30 +305,46 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		return results;
 	}
 
-	private static List<(CaptureSource source, byte[]? pixels, int tw, int th)> EnumerateCameras()
+	private static async Task<List<CaptureSource>> EnumerateCamerasAsync()
 	{
-		var results = new List<(CaptureSource, byte[]?, int, int)>();
-		var name = new StringBuilder(256);
-		var ver = new StringBuilder(256);
-
-		for (uint i = 0; i < 10; i++)
+		try
 		{
-			name.Clear();
-			ver.Clear();
-			if (Native.capGetDriverDescriptionW(i, name, 256, ver, 256))
-			{
-				string n = name.ToString();
-				results.Add((new CaptureSource
-				{
-					Id = $"camera-{i}",
-					Name = string.IsNullOrWhiteSpace(n) ? $"Camera {i}" : n,
-					Description = ver.ToString(),
-					Kind = CaptureSourceKind.Camera,
-				}, null, 0, 0));
-			}
-		}
+			var cameras = await FFmpegService.EnumerateCamerasAsync();
+			var results = new List<CaptureSource>();
 
-		return results;
+			foreach (var (id, name) in cameras)
+			{
+				var source = new CaptureSource
+				{
+					Id = id,
+					Name = name,
+					Kind = CaptureSourceKind.Camera,
+				};
+
+				try
+				{
+					var thumbPath = Path.Combine(Path.GetTempPath(), $"elapsed-cam-{Guid.NewGuid():N}.jpg");
+					var grabbed = await FFmpegService.GrabCameraFrameAsync(id, thumbPath);
+					if (grabbed is not null)
+					{
+						using var codec = SkiaSharp.SKCodec.Create(thumbPath);
+						if (codec is not null)
+							source.Resolution = $"{codec.Info.Width}x{codec.Info.Height}";
+
+						source.Thumbnail = new BitmapImage(new Uri(thumbPath));
+					}
+				}
+				catch { }
+
+				results.Add(source);
+			}
+
+			return results;
+		}
+		catch
+		{
+			return [];
+		}
 	}
 
 	private static int GetMonitorRefreshRate(string deviceName)
@@ -422,6 +442,83 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		}
 	}
 
+	private static BitmapImage? ExtractWindowIcon(nint hWnd)
+	{
+		try
+		{
+			var hIcon = Native.SendMessageW(hWnd, Native.WM_GETICON, 1 /* ICON_BIG */, nint.Zero);
+			if (hIcon == nint.Zero)
+				hIcon = Native.GetClassLongPtrW(hWnd, Native.GCL_HICON);
+			if (hIcon == nint.Zero)
+				hIcon = Native.SendMessageW(hWnd, Native.WM_GETICON, Native.ICON_SMALL2, nint.Zero);
+			if (hIcon == nint.Zero)
+				hIcon = Native.GetClassLongPtrW(hWnd, Native.GCL_HICONSM);
+			if (hIcon == nint.Zero)
+				return null;
+
+			if (Native.GetIconInfo(hIcon, out var iconInfo) == 0)
+				return null;
+
+			try
+			{
+				var colorBmp = iconInfo.hbmColor;
+				if (colorBmp == nint.Zero) return null;
+
+				Native.GetObjectW(colorBmp, Marshal.SizeOf<Native.BITMAP>(), out var bm);
+				int w = bm.bmWidth;
+				int h = bm.bmHeight;
+				if (w <= 0 || h <= 0) return null;
+
+				nint hdcScreen = Native.GetDC(nint.Zero);
+				nint hdcMem = Native.CreateCompatibleDC(hdcScreen);
+				nint hOld = Native.SelectObject(hdcMem, colorBmp);
+
+				var bi = new Native.BITMAPINFOHEADER
+				{
+					biSize = 40,
+					biWidth = w,
+					biHeight = -h,
+					biPlanes = 1,
+					biBitCount = 32,
+					biSizeImage = (uint)(w * h * 4),
+				};
+
+				var pixels = new byte[w * h * 4];
+				Native.GetDIBits(hdcMem, colorBmp, 0, (uint)h, pixels, ref bi, 0);
+
+				Native.SelectObject(hdcMem, hOld);
+				Native.DeleteDC(hdcMem);
+				Native.ReleaseDC(nint.Zero, hdcScreen);
+
+				var info = new SKImageInfo(w, h, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+				using var bitmap = new SKBitmap(info);
+				unsafe
+				{
+					fixed (byte* ptr = pixels)
+						bitmap.InstallPixels(info, (nint)ptr, w * 4);
+
+					using var image = SKImage.FromBitmap(bitmap);
+					using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+					var path = Path.Combine(Path.GetTempPath(), $"elapsed-icon-{Guid.NewGuid():N}.png");
+					using (var stream = File.OpenWrite(path))
+						data.SaveTo(stream);
+					return new BitmapImage(new Uri(path));
+				}
+			}
+			finally
+			{
+				if (iconInfo.hbmColor != nint.Zero)
+					Native.DeleteObject(iconInfo.hbmColor);
+				if (iconInfo.hbmMask != nint.Zero)
+					Native.DeleteObject(iconInfo.hbmMask);
+			}
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
 	private static byte[] EncodeBmp(byte[] bgraPixels, int width, int height)
 		=> BmpEncoder.Encode(bgraPixels, width, height);
 
@@ -511,6 +608,42 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 
 		[DllImport("avicap32.dll", CharSet = CharSet.Unicode)]
 		public static extern bool capGetDriverDescriptionW(uint wDriverIndex, StringBuilder lpszName, int cbName, StringBuilder lpszVer, int cbVer);
+
+		[DllImport("user32.dll")]
+		public static extern nint SendMessageW(nint hWnd, uint msg, nint wParam, nint lParam);
+
+		[DllImport("user32.dll")]
+		public static extern nint GetClassLongPtrW(nint hWnd, int nIndex);
+
+		[DllImport("user32.dll")]
+		public static extern bool DestroyIcon(nint hIcon);
+
+		[DllImport("user32.dll")]
+		public static extern int GetIconInfo(nint hIcon, out ICONINFO piconinfo);
+
+		[DllImport("gdi32.dll")]
+		public static extern int GetObjectW(nint h, int c, out BITMAP pv);
+
+		public const uint WM_GETICON = 0x007F;
+		public const nint ICON_SMALL2 = 2;
+		public const int GCL_HICONSM = -34;
+		public const int GCL_HICON = -14;
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct ICONINFO
+		{
+			public bool fIcon;
+			public int xHotspot, yHotspot;
+			public nint hbmMask, hbmColor;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct BITMAP
+		{
+			public int bmType, bmWidth, bmHeight, bmWidthBytes;
+			public ushort bmPlanes, bmBitsPixel;
+			public nint bmBits;
+		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct RECT

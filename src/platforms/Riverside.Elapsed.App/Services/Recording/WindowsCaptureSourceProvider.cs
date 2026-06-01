@@ -92,6 +92,59 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		return new BitmapImage(new Uri(tempPath));
 	}
 
+	public Task<byte[]?> CapturePreviewBytesAsync(CaptureSource source, int maxWidth, int maxHeight)
+	{
+		return Task.Run(() =>
+		{
+			byte[]? pixels = null;
+			int tw = 0, th = 0;
+
+			if (source.Kind == CaptureSourceKind.Screen)
+			{
+				int index = 0;
+				int targetIndex = int.Parse(source.Id.Replace("monitor-", ""));
+				Native.MonitorEnumProc callback = (nint hMonitor, nint hdcMonitor, ref Native.RECT lprcMonitor, nint dwData) =>
+				{
+					if (index == targetIndex)
+					{
+						var mi = new Native.MONITORINFOEX();
+						mi.cbSize = Marshal.SizeOf<Native.MONITORINFOEX>();
+						if (Native.GetMonitorInfoW(hMonitor, ref mi))
+						{
+							int w = mi.rcMonitor.right - mi.rcMonitor.left;
+							int h = mi.rcMonitor.bottom - mi.rcMonitor.top;
+							(tw, th) = ScaleToFit(w, h, maxWidth, maxHeight);
+							pixels = CaptureScreenPixels(mi.rcMonitor.left, mi.rcMonitor.top, w, h, tw, th);
+						}
+						index++;
+						return false;
+					}
+					index++;
+					return true;
+				};
+				Native.EnumDisplayMonitors(nint.Zero, nint.Zero, callback, nint.Zero);
+				GC.KeepAlive(callback);
+			}
+			else if (source.Kind == CaptureSourceKind.Window)
+			{
+				var hWnd = nint.Parse(source.Id.Replace("window-", ""));
+				Native.GetWindowRect(hWnd, out var rect);
+				int w = rect.right - rect.left;
+				int h = rect.bottom - rect.top;
+				if (w > 1 && h > 1)
+				{
+					(tw, th) = ScaleToFit(w, h, maxWidth, maxHeight);
+					pixels = CaptureWindowPixels(hWnd, w, h, tw, th);
+				}
+			}
+
+			if (pixels is null)
+				return null;
+
+			return (byte[]?)EncodeBmp(pixels, tw, th);
+		});
+	}
+
 	private List<(CaptureSource source, byte[]? pixels, int tw, int th)> EnumerateScreens()
 	{
 		var results = new List<(CaptureSource, byte[]?, int, int)>();

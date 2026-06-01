@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Riverside.Elapsed.App.Services.Recording;
+using Riverside.Elapsed.App.Services.Upload;
 using Riverside.Elapsed.App.ViewModels;
 using Uno.Resizetizer;
 
@@ -65,12 +66,14 @@ public partial class App : Application
 		ICaptureSourceProvider sourceProvider = new NoOpCaptureSourceProvider();
 #endif
 
+		var lapse = new LapseService();
+
 		MainWindow.Content = new RecordingPage
 		{
 			//var authService = services.GetRequiredService<ILapseAuthService>();
 			//await authService.TryRestoreSessionAsync();
 			await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
-			DataContext = new RecordingViewModel(recording, sourceProvider)
+			DataContext = new RecordingViewModel(recording, sourceProvider, lapse)
 		};
 		MainWindow.Activate();
 	}

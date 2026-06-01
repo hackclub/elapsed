@@ -27,6 +27,7 @@ public sealed partial class RecordingPage : Page
 		{
 			vm.RecordingStarted += OnRecordingStarted;
 			vm.RecordingStopped += OnRecordingStopped;
+			vm.FocusRequested += OnFocusRequested;
 
 			ScreenRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Screen;
 			WindowRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Window;
@@ -40,6 +41,7 @@ public sealed partial class RecordingPage : Page
 		{
 			vm.RecordingStarted -= OnRecordingStarted;
 			vm.RecordingStopped -= OnRecordingStopped;
+			vm.FocusRequested -= OnFocusRequested;
 		}
 	}
 
@@ -60,6 +62,14 @@ public sealed partial class RecordingPage : Page
 		if (_selectedCard is not null && _selectedCard != card)
 			_selectedCard.BorderThickness = new Thickness(1);
 		_selectedCard = card;
+	}
+
+	private void OnFocusRequested(object? sender, EventArgs e)
+	{
+		var window = App.CurrentMainWindow;
+		if (window is null) return;
+
+		window.Activate();
 	}
 
 	private void OnRecordingStarted(object? sender, EventArgs e)

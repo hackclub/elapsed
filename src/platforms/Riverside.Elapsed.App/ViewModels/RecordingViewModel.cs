@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Elapsed.App.Models.Recording;
 using Riverside.Elapsed.App.Services.Recording;
+using Riverside.Elapsed.App.Services.Upload;
 
 namespace Riverside.Elapsed.App.ViewModels;
 
@@ -10,6 +12,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 {
 	private readonly IRecordingFacade _recording;
 	private readonly ICaptureSourceProvider _sourceProvider;
+	private readonly LapseService _lapse;
 	private readonly DispatcherQueueTimer? _timer;
 	private readonly DispatcherQueueTimer? _previewTimer;
 	private bool _previewUpdating;
@@ -32,15 +35,37 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	[ObservableProperty]
 	private ImageSource? _previewImage;
 
-	public RecordingViewModel(IRecordingFacade recording, ICaptureSourceProvider sourceProvider)
+	[ObservableProperty]
+	private double _uploadProgress;
+
+	[ObservableProperty]
+	private string? _uploadStatusText;
+
+	[ObservableProperty]
+	private bool _isSignedIn;
+
+	[ObservableProperty]
+	private string? _userDisplayName;
+
+	[ObservableProperty]
+	private string? _userHandle;
+
+	[ObservableProperty]
+	private ImageSource? _userProfilePicture;
+
+	public RecordingViewModel(IRecordingFacade recording, ICaptureSourceProvider sourceProvider, LapseService lapse)
 	{
 		_recording = recording;
 		_sourceProvider = sourceProvider;
+		_lapse = lapse;
 		_recording.StateChanged += OnRecordingStateChanged;
 
-		StartRecordingCommand = new AsyncRelayCommand(StartRecordingAsync, () => Phase == RecordingPhase.Setup && SelectedSource is not null);
+		StartRecordingCommand = new AsyncRelayCommand(StartRecordingAsync, CanStartRecording);
 		PauseResumeCommand = new AsyncRelayCommand(TogglePauseResumeAsync, () => Phase is RecordingPhase.Active or RecordingPhase.Paused);
 		StopCommand = new AsyncRelayCommand(StopAsync, () => Phase is RecordingPhase.Active or RecordingPhase.Paused);
+		SignInCommand = new AsyncRelayCommand(SignInAsync, () => !IsSignedIn);
+		SignOutCommand = new AsyncRelayCommand(SignOutAsync, () => IsSignedIn);
+		ViewProfileCommand = new RelayCommand(ViewProfile, () => IsSignedIn);
 
 		var dispatcher = DispatcherQueue.GetForCurrentThread();
 		if (dispatcher is not null)
@@ -54,14 +79,16 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 			_previewTimer.Tick += (_, _) => _ = RefreshPreviewAsync();
 		}
 
-		_ = RefreshSourcesAsync();
+		_ = InitializeAsync();
 	}
 
 	public ObservableCollection<CaptureSource> CurrentSources { get; } = [];
 
 	public bool IsInSetup => Phase == RecordingPhase.Setup;
 
-	public bool IsActive => Phase != RecordingPhase.Setup;
+	public bool IsActive => Phase is RecordingPhase.Active or RecordingPhase.Paused;
+
+	public bool IsUploading => Phase == RecordingPhase.Uploading;
 
 	public bool IsPaused => Phase == RecordingPhase.Paused;
 
@@ -75,9 +102,97 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 
 	public IAsyncRelayCommand StopCommand { get; }
 
+	public IAsyncRelayCommand SignInCommand { get; }
+
+	public IAsyncRelayCommand SignOutCommand { get; }
+
+	public IRelayCommand ViewProfileCommand { get; }
+
 	public event EventHandler? RecordingStarted;
 
 	public event EventHandler? RecordingStopped;
+
+	public event EventHandler? FocusRequested;
+
+	private bool CanStartRecording()
+		=> Phase == RecordingPhase.Setup && SelectedSource is not null && IsSignedIn;
+
+	private async Task InitializeAsync()
+	{
+		await _lapse.InitializeAsync();
+		if (_lapse.IsAuthenticated)
+			await LoadUserProfileAsync();
+
+		_ = RefreshSourcesAsync();
+	}
+
+	private async Task LoadUserProfileAsync()
+	{
+		try
+		{
+			var profile = await _lapse.GetCurrentUserAsync();
+			if (profile is not null)
+			{
+				IsSignedIn = true;
+				UserDisplayName = profile.DisplayName;
+				UserHandle = profile.Handle;
+				if (profile.ProfilePictureUrl is not null)
+					UserProfilePicture = new BitmapImage(new Uri(profile.ProfilePictureUrl));
+			}
+			else
+			{
+				ClearUserState();
+			}
+		}
+		catch
+		{
+			ClearUserState();
+		}
+
+		StartRecordingCommand.NotifyCanExecuteChanged();
+		SignInCommand.NotifyCanExecuteChanged();
+		SignOutCommand.NotifyCanExecuteChanged();
+		ViewProfileCommand.NotifyCanExecuteChanged();
+	}
+
+	private void ClearUserState()
+	{
+		IsSignedIn = false;
+		UserDisplayName = null;
+		UserHandle = null;
+		UserProfilePicture = null;
+	}
+
+	private async Task SignInAsync()
+	{
+		try
+		{
+			StatusMessage = null;
+			await _lapse.SignInAsync();
+			await LoadUserProfileAsync();
+			FocusRequested?.Invoke(this, EventArgs.Empty);
+		}
+		catch (Exception ex)
+		{
+			StatusMessage = $"Sign in failed: {ex.Message}";
+		}
+	}
+
+	private async Task SignOutAsync()
+	{
+		await _lapse.SignOutAsync();
+		ClearUserState();
+		StartRecordingCommand.NotifyCanExecuteChanged();
+		SignInCommand.NotifyCanExecuteChanged();
+		SignOutCommand.NotifyCanExecuteChanged();
+		ViewProfileCommand.NotifyCanExecuteChanged();
+	}
+
+	private void ViewProfile()
+	{
+		if (UserHandle is not null)
+			LapseService.OpenProfileInBrowser(UserHandle);
+	}
 
 	partial void OnSelectedSourceKindChanged(CaptureSourceKind value)
 	{
@@ -95,6 +210,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		OnPropertyChanged(nameof(IsInSetup));
 		OnPropertyChanged(nameof(IsActive));
+		OnPropertyChanged(nameof(IsUploading));
 		OnPropertyChanged(nameof(IsPaused));
 		OnPropertyChanged(nameof(PauseResumeLabel));
 		OnPropertyChanged(nameof(PauseResumeGlyph));
@@ -108,12 +224,8 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		CurrentSources.Clear();
 		var sources = await _sourceProvider.GetSourcesAsync(SelectedSourceKind);
-		Console.Error.WriteLine($"[Elapsed] {SelectedSourceKind}: {sources.Count} source(s)");
 		foreach (var source in sources)
-		{
-			Console.Error.WriteLine($"[Elapsed]   - {source.Name} | thumb={source.Thumbnail is not null}");
 			CurrentSources.Add(source);
-		}
 		SelectedSource = null;
 	}
 
@@ -121,7 +233,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		if (_previewTimer is null) return;
 
-		if (SelectedSource is not null && Phase != RecordingPhase.Setup)
+		if (SelectedSource is not null && Phase is RecordingPhase.Active or RecordingPhase.Paused)
 			_previewTimer.Start();
 		else
 			_previewTimer.Stop();
@@ -139,7 +251,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 			if (image is not null)
 				PreviewImage = image;
 		}
-		catch { /* capture may fail transiently */ }
+		catch { }
 		finally
 		{
 			_previewUpdating = false;
@@ -189,14 +301,56 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		try
 		{
+			byte[]? thumbnailBytes = null;
+			if (SelectedSource is not null)
+			{
+				try
+				{
+					thumbnailBytes = await _sourceProvider.CapturePreviewBytesAsync(SelectedSource, 640, 480);
+				}
+				catch { }
+			}
+
 			var result = await _recording.StopAsync().ConfigureAwait(true);
 			_timer?.Stop();
+			_previewTimer?.Stop();
+
+			if (result.FilePath is null)
+			{
+				Phase = RecordingPhase.Setup;
+				ElapsedDisplay = "00:00:00";
+				RecordingStopped?.Invoke(this, EventArgs.Empty);
+				return;
+			}
+
+			Phase = RecordingPhase.Uploading;
+			RecordingStopped?.Invoke(this, EventArgs.Empty);
+
+			try
+			{
+				var progress = new Progress<UploadProgress>(p =>
+				{
+					UploadProgress = p.Fraction;
+					UploadStatusText = p.Description;
+				});
+
+				var draftId = await _lapse.UploadDraftAsync(
+					result.FilePath,
+					thumbnailBytes ?? [],
+					result.Duration,
+					progress);
+
+				LapseService.OpenDraftInBrowser(draftId);
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Upload failed: {ex.Message}";
+			}
+
 			Phase = RecordingPhase.Setup;
 			ElapsedDisplay = "00:00:00";
-			StatusMessage = result.FilePath is null
-				? null
-				: $"Saved to {result.FilePath}";
-			RecordingStopped?.Invoke(this, EventArgs.Empty);
+			UploadProgress = 0;
+			UploadStatusText = null;
 		}
 		catch (Exception ex)
 		{

@@ -27,9 +27,10 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="*" />
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<!-- Header: brand + settings -->
+					<!-- Header: brand + profile -->
 					<Grid Grid.Row="0" Margin="0,0,0,16">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
@@ -51,6 +52,20 @@
 								VerticalAlignment="Center"
 								Text="Elapsed" />
 						</StackPanel>
+
+						<!-- Sign in button (when not authenticated) -->
+						<Button
+							Grid.Column="1"
+							Padding="8,4"
+							Command="{Binding SignInCommand}"
+							Visibility="{Binding IsSignedIn, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<FontIcon FontSize="14" Glyph="&#xE77B;" />
+								<TextBlock FontSize="12" Text="Sign In" VerticalAlignment="Center" />
+							</StackPanel>
+						</Button>
+
+						<!-- Profile button (when authenticated) -->
 						<Button
 							Grid.Column="1"
 							Width="32"
@@ -58,8 +73,42 @@
 							Padding="0"
 							Background="Transparent"
 							BorderThickness="0"
-							ToolTipService.ToolTip="Settings">
-							<FontIcon FontSize="16" Glyph="&#xE713;" />
+							Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}}">
+							<Grid>
+								<Ellipse
+									Width="28"
+									Height="28"
+									Fill="{ThemeResource ControlFillColorSecondaryBrush}" />
+								<Ellipse Width="28" Height="28">
+									<Ellipse.Fill>
+										<ImageBrush
+											ImageSource="{Binding UserProfilePicture}"
+											Stretch="UniformToFill" />
+									</Ellipse.Fill>
+								</Ellipse>
+							</Grid>
+							<Button.Flyout>
+								<MenuFlyout Placement="BottomEdgeAlignedRight">
+									<MenuFlyoutItem
+										Text="{Binding UserDisplayName}"
+										IsEnabled="False" />
+									<MenuFlyoutSeparator />
+									<MenuFlyoutItem
+										Text="View Profile"
+										Command="{Binding ViewProfileCommand}">
+										<MenuFlyoutItem.Icon>
+											<FontIcon Glyph="&#xE77B;" />
+										</MenuFlyoutItem.Icon>
+									</MenuFlyoutItem>
+									<MenuFlyoutItem
+										Text="Sign Out"
+										Command="{Binding SignOutCommand}">
+										<MenuFlyoutItem.Icon>
+											<FontIcon Glyph="&#xE7E8;" />
+										</MenuFlyoutItem.Icon>
+									</MenuFlyoutItem>
+								</MenuFlyout>
+							</Button.Flyout>
 						</Button>
 					</Grid>
 
@@ -162,13 +211,42 @@
 						</ItemsRepeater>
 					</ScrollViewer>
 
+					<!-- Sign in prompt (shown when not authenticated) -->
+					<Border
+						Grid.Row="3"
+						Margin="0,0,0,8"
+						Padding="12"
+						CornerRadius="8"
+						Background="{ThemeResource ControlFillColorSecondaryBrush}"
+						Visibility="{Binding IsSignedIn, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+						<StackPanel Spacing="8" HorizontalAlignment="Center">
+							<TextBlock
+								FontSize="12"
+								Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								TextWrapping="Wrap"
+								Text="Sign in to your Lapse account to start recording timelapses." />
+							<Button
+								HorizontalAlignment="Center"
+								Command="{Binding SignInCommand}"
+								Style="{ThemeResource AccentButtonStyle}">
+								<StackPanel Orientation="Horizontal" Spacing="6">
+									<FontIcon FontSize="14" Glyph="&#xE77B;" />
+									<TextBlock FontSize="12" Text="Sign In" VerticalAlignment="Center" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
+					</Border>
+
 					<!-- Start recording button -->
 					<Button
-						Grid.Row="3"
+						Grid.Row="4"
 						Height="44"
 						HorizontalAlignment="Stretch"
 						Command="{Binding StartRecordingCommand}"
 						CornerRadius="22"
+						Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}}"
 						Style="{ThemeResource AccentButtonStyle}">
 						<StackPanel Orientation="Horizontal" Spacing="8">
 							<FontIcon FontSize="14" Glyph="&#xE7C8;" />
@@ -241,6 +319,47 @@
 					<TextBlock
 						FontSize="12"
 						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+						HorizontalAlignment="Center"
+						Text="{Binding StatusMessage}"
+						TextWrapping="Wrap"
+						Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+				</StackPanel>
+
+				<!-- Uploading state -->
+				<StackPanel
+					Spacing="16"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
+					Visibility="{Binding IsUploading, Converter={StaticResource BoolToVisibilityConverter}}">
+
+					<FontIcon
+						FontSize="32"
+						HorizontalAlignment="Center"
+						Glyph="&#xE898;" />
+
+					<TextBlock
+						FontSize="18"
+						FontWeight="SemiBold"
+						HorizontalAlignment="Center"
+						Text="Uploading to Lapse" />
+
+					<ProgressBar
+						HorizontalAlignment="Stretch"
+						Margin="40,0"
+						Maximum="1"
+						Value="{Binding UploadProgress}" />
+
+					<TextBlock
+						FontSize="12"
+						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+						HorizontalAlignment="Center"
+						Text="{Binding UploadStatusText}"
+						TextWrapping="Wrap" />
+
+					<!-- Error status -->
+					<TextBlock
+						FontSize="12"
+						Foreground="Red"
 						HorizontalAlignment="Center"
 						Text="{Binding StatusMessage}"
 						TextWrapping="Wrap"

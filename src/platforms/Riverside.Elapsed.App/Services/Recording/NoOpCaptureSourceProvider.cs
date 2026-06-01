@@ -9,4 +9,7 @@ public sealed class NoOpCaptureSourceProvider : ICaptureSourceProvider
 
 	public Task<Microsoft.UI.Xaml.Media.ImageSource?> CapturePreviewAsync(CaptureSource source, int maxWidth, int maxHeight)
 		=> Task.FromResult<Microsoft.UI.Xaml.Media.ImageSource?>(null);
+
+	public Task<byte[]?> CapturePreviewBytesAsync(CaptureSource source, int maxWidth, int maxHeight)
+		=> Task.FromResult<byte[]?>(null);
 }

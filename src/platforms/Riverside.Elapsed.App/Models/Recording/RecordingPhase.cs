@@ -5,4 +5,5 @@ public enum RecordingPhase
 	Setup,
 	Active,
 	Paused,
+	Uploading,
 }

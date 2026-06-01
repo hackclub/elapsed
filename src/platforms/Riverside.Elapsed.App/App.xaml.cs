@@ -48,19 +48,18 @@ public partial class App : Application
 		MainWindow.SetWindowIcon();
 
 #if HAS_MEDIA_RECORDING
-		IRecordingFacade recording;
 		ICaptureSourceProvider sourceProvider;
 
 		if (OperatingSystem.IsWindows())
-		{
-			recording = new WindowsRecordingFacade();
 			sourceProvider = new WindowsCaptureSourceProvider();
-		}
+		else if (OperatingSystem.IsMacOS())
+			sourceProvider = new MacCaptureSourceProvider();
+		else if (OperatingSystem.IsLinux())
+			sourceProvider = new LinuxCaptureSourceProvider();
 		else
-		{
-			recording = new NoOpRecordingFacade();
 			sourceProvider = new NoOpCaptureSourceProvider();
-		}
+
+		IRecordingFacade recording = new TimelapseRecordingFacade(sourceProvider);
 #else
 		IRecordingFacade recording = new NoOpRecordingFacade();
 		ICaptureSourceProvider sourceProvider = new NoOpCaptureSourceProvider();

@@ -152,6 +152,65 @@ public sealed class LapseService : IDisposable
 		return draft.DraftId;
 	}
 
+	public async Task UpdateDraftAsync(
+		string draftId, string name, string? description,
+		CancellationToken ct = default)
+	{
+		using var req = new HttpRequestMessage(new HttpMethod("PATCH"), $"{BaseUrl}/draftTimelapse/update");
+		req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _auth!.AccessToken);
+
+		var changes = new Dictionary<string, object>
+		{
+			["name"] = name,
+			["editList"] = Array.Empty<object>(),
+		};
+		if (description is not null)
+			changes["description"] = description;
+
+		req.Content = new StringContent(
+			JsonSerializer.Serialize(new { id = draftId, changes }, JsonOptions),
+			Encoding.UTF8, "application/json");
+
+		using var res = await _http.SendAsync(req, ct);
+		if (!res.IsSuccessStatusCode)
+		{
+			var body = await res.Content.ReadAsStringAsync(ct);
+			throw new HttpRequestException($"Draft update failed ({res.StatusCode}): {body}");
+		}
+	}
+
+	public async Task<string> PublishDraftAsync(
+		string draftId, string visibility,
+		CancellationToken ct = default)
+	{
+		using var req = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/timelapse/publish");
+		req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _auth!.AccessToken);
+		req.Content = new StringContent(
+			JsonSerializer.Serialize(new
+			{
+				id = draftId,
+				visibility,
+				deviceKey = _device!.PasskeyHex,
+			}, JsonOptions),
+			Encoding.UTF8, "application/json");
+
+		using var res = await _http.SendAsync(req, ct);
+		var body = await res.Content.ReadAsStringAsync(ct);
+
+		if (!res.IsSuccessStatusCode)
+			throw new HttpRequestException($"Publish failed ({res.StatusCode}): {body}");
+
+		using var doc = JsonDocument.Parse(body);
+		return doc.RootElement
+			.GetProperty("data")
+			.GetProperty("timelapse")
+			.GetProperty("id")
+			.GetString()!;
+	}
+
+	public static void OpenTimelapseInBrowser(string timelapseId)
+		=> OpenUrl($"{WebPortalBase}/timelapse/{timelapseId}");
+
 	public static void OpenDraftInBrowser(string draftId)
 		=> OpenUrl($"{DraftEditorBase}/{draftId}");
 
@@ -455,5 +514,6 @@ public enum UploadPhase
 	Encrypting,
 	UploadingSession,
 	UploadingThumbnail,
+	Publishing,
 	Complete,
 }

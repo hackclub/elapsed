@@ -16,6 +16,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	private readonly DispatcherQueueTimer? _timer;
 	private readonly DispatcherQueueTimer? _previewTimer;
 	private bool _previewUpdating;
+	private string? _currentDraftId;
 
 	[ObservableProperty]
 	private CaptureSourceKind _selectedSourceKind = CaptureSourceKind.Screen;
@@ -42,6 +43,15 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	private string? _uploadStatusText;
 
 	[ObservableProperty]
+	private string _publishTitle = "";
+
+	[ObservableProperty]
+	private string _publishDescription = "";
+
+	[ObservableProperty]
+	private int _publishVisibilityIndex;
+
+	[ObservableProperty]
 	private bool _isSignedIn;
 
 	[ObservableProperty]
@@ -63,6 +73,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		StartRecordingCommand = new AsyncRelayCommand(StartRecordingAsync, CanStartRecording);
 		PauseResumeCommand = new AsyncRelayCommand(TogglePauseResumeAsync, () => Phase is RecordingPhase.Active or RecordingPhase.Paused);
 		StopCommand = new AsyncRelayCommand(StopAsync, () => Phase is RecordingPhase.Active or RecordingPhase.Paused);
+		PublishCommand = new AsyncRelayCommand(PublishAsync, () => Phase == RecordingPhase.Publishing);
 		SignInCommand = new AsyncRelayCommand(SignInAsync, () => !IsSignedIn);
 		SignOutCommand = new AsyncRelayCommand(SignOutAsync, () => IsSignedIn);
 		ViewProfileCommand = new RelayCommand(ViewProfile, () => IsSignedIn);
@@ -88,9 +99,15 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 
 	public bool IsActive => Phase is RecordingPhase.Active or RecordingPhase.Paused;
 
+	public bool IsEncoding => Phase == RecordingPhase.Encoding;
+
 	public bool IsUploading => Phase == RecordingPhase.Uploading;
 
+	public bool IsPublishing => Phase == RecordingPhase.Publishing;
+
 	public bool IsPaused => Phase == RecordingPhase.Paused;
+
+	public static string[] VisibilityOptions => ["Public", "Unlisted"];
 
 	public string PauseResumeLabel => Phase == RecordingPhase.Paused ? "Resume" : "Pause";
 
@@ -101,6 +118,8 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	public IAsyncRelayCommand PauseResumeCommand { get; }
 
 	public IAsyncRelayCommand StopCommand { get; }
+
+	public IAsyncRelayCommand PublishCommand { get; }
 
 	public IAsyncRelayCommand SignInCommand { get; }
 
@@ -210,13 +229,16 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		OnPropertyChanged(nameof(IsInSetup));
 		OnPropertyChanged(nameof(IsActive));
+		OnPropertyChanged(nameof(IsEncoding));
 		OnPropertyChanged(nameof(IsUploading));
+		OnPropertyChanged(nameof(IsPublishing));
 		OnPropertyChanged(nameof(IsPaused));
 		OnPropertyChanged(nameof(PauseResumeLabel));
 		OnPropertyChanged(nameof(PauseResumeGlyph));
 		StartRecordingCommand.NotifyCanExecuteChanged();
 		PauseResumeCommand.NotifyCanExecuteChanged();
 		StopCommand.NotifyCanExecuteChanged();
+		PublishCommand.NotifyCanExecuteChanged();
 		UpdatePreviewTimer();
 	}
 
@@ -262,6 +284,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		try
 		{
+			_recording.SetSource(SelectedSource!);
 			await _recording.StartAsync().ConfigureAwait(true);
 			Phase = RecordingPhase.Active;
 			_timer?.Start();
@@ -311,20 +334,22 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 				catch { }
 			}
 
-			var result = await _recording.StopAsync().ConfigureAwait(true);
 			_timer?.Stop();
 			_previewTimer?.Stop();
+
+			Phase = RecordingPhase.Encoding;
+			RecordingStopped?.Invoke(this, EventArgs.Empty);
+
+			var result = await _recording.StopAsync().ConfigureAwait(true);
 
 			if (result.FilePath is null)
 			{
 				Phase = RecordingPhase.Setup;
 				ElapsedDisplay = "00:00:00";
-				RecordingStopped?.Invoke(this, EventArgs.Empty);
 				return;
 			}
 
 			Phase = RecordingPhase.Uploading;
-			RecordingStopped?.Invoke(this, EventArgs.Empty);
 
 			try
 			{
@@ -340,13 +365,49 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 					result.Duration,
 					progress);
 
-				LapseService.OpenDraftInBrowser(draftId);
+				_currentDraftId = draftId;
+				PublishTitle = "";
+				PublishDescription = "";
+				PublishVisibilityIndex = 0;
+				StatusMessage = null;
+				Phase = RecordingPhase.Publishing;
 			}
 			catch (Exception ex)
 			{
 				StatusMessage = $"Upload failed: {ex.Message}";
+				Phase = RecordingPhase.Setup;
+				ElapsedDisplay = "00:00:00";
+				UploadProgress = 0;
+				UploadStatusText = null;
 			}
+		}
+		catch (Exception ex)
+		{
+			StatusMessage = $"Failed to stop: {ex.Message}";
+		}
+	}
 
+	private async Task PublishAsync()
+	{
+		if (_currentDraftId is null) return;
+
+		var title = string.IsNullOrWhiteSpace(PublishTitle) ? "Untitled Timelapse" : PublishTitle.Trim();
+		var description = string.IsNullOrWhiteSpace(PublishDescription) ? null : PublishDescription.Trim();
+		var visibility = PublishVisibilityIndex == 0 ? "PUBLIC" : "UNLISTED";
+
+		StatusMessage = null;
+
+		try
+		{
+			UploadStatusText = "Updating draft...";
+			await _lapse.UpdateDraftAsync(_currentDraftId, title, description);
+
+			UploadStatusText = "Publishing...";
+			var timelapseId = await _lapse.PublishDraftAsync(_currentDraftId, visibility);
+
+			LapseService.OpenTimelapseInBrowser(timelapseId);
+
+			_currentDraftId = null;
 			Phase = RecordingPhase.Setup;
 			ElapsedDisplay = "00:00:00";
 			UploadProgress = 0;
@@ -354,7 +415,8 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		}
 		catch (Exception ex)
 		{
-			StatusMessage = $"Failed to stop: {ex.Message}";
+			StatusMessage = $"Publish failed: {ex.Message}";
+			UploadStatusText = null;
 		}
 	}
 

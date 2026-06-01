@@ -25,7 +25,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="$(SharedDirectory)\Riverside.Elapsed\Riverside.Elapsed.csproj" />
-		<ProjectReference Include="$(SharedDirectory)\Riverside.MediaRecording\Riverside.MediaRecording.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

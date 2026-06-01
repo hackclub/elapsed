@@ -22,6 +22,9 @@ public interface IRecordingFacade
 	/// <summary>Raised when <see cref="State"/> or <see cref="Duration"/> change.</summary>
 	event EventHandler? StateChanged;
 
+	/// <summary>Sets the capture source for the next recording session.</summary>
+	void SetSource(Models.Recording.CaptureSource source) { }
+
 	/// <summary>Starts a new recording session if one is not already active.</summary>
 	Task StartAsync(CancellationToken cancellationToken = default);
 

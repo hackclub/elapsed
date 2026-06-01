@@ -92,6 +92,54 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		return new BitmapImage(new Uri(tempPath));
 	}
 
+	public Task<CapturedFrame?> CaptureFrameAsync(CaptureSource source)
+	{
+		return Task.Run(() =>
+		{
+			if (source.Kind == CaptureSourceKind.Screen)
+			{
+				byte[]? pixels = null;
+				int capturedW = 0, capturedH = 0;
+				int index = 0;
+				int targetIndex = int.Parse(source.Id.Replace("monitor-", ""));
+				Native.MonitorEnumProc callback = (nint hMonitor, nint hdcMonitor, ref Native.RECT lprcMonitor, nint dwData) =>
+				{
+					if (index == targetIndex)
+					{
+						var mi = new Native.MONITORINFOEX();
+						mi.cbSize = Marshal.SizeOf<Native.MONITORINFOEX>();
+						if (Native.GetMonitorInfoW(hMonitor, ref mi))
+						{
+							capturedW = mi.rcMonitor.right - mi.rcMonitor.left;
+							capturedH = mi.rcMonitor.bottom - mi.rcMonitor.top;
+							pixels = CaptureScreenPixels(mi.rcMonitor.left, mi.rcMonitor.top, capturedW, capturedH, capturedW, capturedH);
+						}
+						index++;
+						return false;
+					}
+					index++;
+					return true;
+				};
+				Native.EnumDisplayMonitors(nint.Zero, nint.Zero, callback, nint.Zero);
+				GC.KeepAlive(callback);
+				return pixels is null ? null : new CapturedFrame(pixels, capturedW, capturedH, IsBottomUp: true);
+			}
+			else if (source.Kind == CaptureSourceKind.Window)
+			{
+				var hWnd = nint.Parse(source.Id.Replace("window-", ""));
+				Native.GetWindowRect(hWnd, out var rect);
+				int w = rect.right - rect.left;
+				int h = rect.bottom - rect.top;
+				if (w <= 1 || h <= 1) return null;
+
+				var pixels = CaptureWindowPixels(hWnd, w, h, w, h);
+				return pixels is null ? null : new CapturedFrame(pixels, w, h, IsBottomUp: true);
+			}
+
+			return (CapturedFrame?)null;
+		});
+	}
+
 	public Task<byte[]?> CapturePreviewBytesAsync(CaptureSource source, int maxWidth, int maxHeight)
 	{
 		return Task.Run(() =>

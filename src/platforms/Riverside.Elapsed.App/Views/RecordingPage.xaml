@@ -325,6 +325,36 @@
 						Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
 				</StackPanel>
 
+				<!-- Encoding state -->
+				<StackPanel
+					Spacing="16"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
+					Visibility="{Binding IsEncoding, Converter={StaticResource BoolToVisibilityConverter}}">
+
+					<FontIcon
+						FontSize="32"
+						HorizontalAlignment="Center"
+						Glyph="&#xE714;" />
+
+					<TextBlock
+						FontSize="18"
+						FontWeight="SemiBold"
+						HorizontalAlignment="Center"
+						Text="Encoding Video" />
+
+					<ProgressBar
+						IsIndeterminate="True"
+						HorizontalAlignment="Stretch"
+						Margin="40,0" />
+
+					<TextBlock
+						FontSize="12"
+						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+						HorizontalAlignment="Center"
+						Text="Preparing your timelapse..." />
+				</StackPanel>
+
 				<!-- Uploading state -->
 				<StackPanel
 					Spacing="16"
@@ -365,6 +395,80 @@
 						TextWrapping="Wrap"
 						Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
 				</StackPanel>
+
+				<!-- Publishing state: title, description, visibility form -->
+				<Grid
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
+					Visibility="{Binding IsPublishing, Converter={StaticResource BoolToVisibilityConverter}}">
+					<StackPanel Spacing="16" Margin="20,0">
+						<FontIcon
+							FontSize="28"
+							HorizontalAlignment="Center"
+							Glyph="&#xE70F;" />
+
+						<TextBlock
+							FontSize="18"
+							FontWeight="SemiBold"
+							HorizontalAlignment="Center"
+							Text="Publish Timelapse" />
+
+						<TextBox
+							Header="Title"
+							PlaceholderText="Give your timelapse a name"
+							MaxLength="60"
+							Text="{Binding PublishTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+						<TextBox
+							Header="Description"
+							PlaceholderText="What were you working on?"
+							MaxLength="280"
+							AcceptsReturn="True"
+							TextWrapping="Wrap"
+							Height="80"
+							Text="{Binding PublishDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+						<ComboBox
+							Header="Visibility"
+							HorizontalAlignment="Stretch"
+							ItemsSource="{Binding VisibilityOptions}"
+							SelectedIndex="{Binding PublishVisibilityIndex, Mode=TwoWay}" />
+
+						<Button
+							Height="40"
+							HorizontalAlignment="Stretch"
+							Command="{Binding PublishCommand}"
+							CornerRadius="20"
+							Style="{ThemeResource AccentButtonStyle}">
+							<StackPanel Orientation="Horizontal" Spacing="8">
+								<FontIcon FontSize="14" Glyph="&#xE898;" />
+								<TextBlock
+									FontSize="14"
+									FontWeight="SemiBold"
+									Text="Publish"
+									VerticalAlignment="Center" />
+							</StackPanel>
+						</Button>
+
+						<!-- Status text during publish -->
+						<TextBlock
+							FontSize="12"
+							Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+							HorizontalAlignment="Center"
+							Text="{Binding UploadStatusText}"
+							TextWrapping="Wrap"
+							Visibility="{Binding UploadStatusText, Converter={StaticResource NullToCollapsedConverter}}" />
+
+						<!-- Error status -->
+						<TextBlock
+							FontSize="12"
+							Foreground="Red"
+							HorizontalAlignment="Center"
+							Text="{Binding StatusMessage}"
+							TextWrapping="Wrap"
+							Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+					</StackPanel>
+				</Grid>
 			</Grid>
 		</Border>
 

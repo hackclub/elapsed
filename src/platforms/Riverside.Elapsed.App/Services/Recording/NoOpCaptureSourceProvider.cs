@@ -12,4 +12,7 @@ public sealed class NoOpCaptureSourceProvider : ICaptureSourceProvider
 
 	public Task<byte[]?> CapturePreviewBytesAsync(CaptureSource source, int maxWidth, int maxHeight)
 		=> Task.FromResult<byte[]?>(null);
+
+	public Task<CapturedFrame?> CaptureFrameAsync(CaptureSource source)
+		=> Task.FromResult<CapturedFrame?>(null);
 }

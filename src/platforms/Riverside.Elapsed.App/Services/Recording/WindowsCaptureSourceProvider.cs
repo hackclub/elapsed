@@ -28,7 +28,7 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		foreach (var (source, pixels, tw, th) in items)
 		{
 			if (pixels is not null)
-				source.Thumbnail = CreateThumbnail(pixels, tw, th);
+				source.BlitThumbnail(pixels, tw, th, bottomUp: true);
 		}
 
 		return items.ConvertAll(i => i.source);
@@ -141,6 +141,59 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 
 			return (CapturedFrame?)null;
 		});
+	}
+
+	public async Task RefreshThumbnailAsync(CaptureSource source, int maxWidth, int maxHeight)
+	{
+		var result = await Task.Run(() =>
+		{
+			byte[]? pixels = null;
+			int tw = 0, th = 0;
+
+			if (source.Kind == CaptureSourceKind.Screen)
+			{
+				int index = 0;
+				int targetIndex = int.Parse(source.Id.Replace("monitor-", ""));
+				Native.MonitorEnumProc callback = (nint hMonitor, nint hdcMonitor, ref Native.RECT lprcMonitor, nint dwData) =>
+				{
+					if (index == targetIndex)
+					{
+						var mi = new Native.MONITORINFOEX();
+						mi.cbSize = Marshal.SizeOf<Native.MONITORINFOEX>();
+						if (Native.GetMonitorInfoW(hMonitor, ref mi))
+						{
+							int w = mi.rcMonitor.right - mi.rcMonitor.left;
+							int h = mi.rcMonitor.bottom - mi.rcMonitor.top;
+							(tw, th) = ScaleToFit(w, h, maxWidth, maxHeight);
+							pixels = CaptureScreenPixels(mi.rcMonitor.left, mi.rcMonitor.top, w, h, tw, th);
+						}
+						index++;
+						return false;
+					}
+					index++;
+					return true;
+				};
+				Native.EnumDisplayMonitors(nint.Zero, nint.Zero, callback, nint.Zero);
+				GC.KeepAlive(callback);
+			}
+			else if (source.Kind == CaptureSourceKind.Window)
+			{
+				var hWnd = nint.Parse(source.Id.Replace("window-", ""));
+				Native.GetWindowRect(hWnd, out var rect);
+				int w = rect.right - rect.left;
+				int h = rect.bottom - rect.top;
+				if (w > 1 && h > 1)
+				{
+					(tw, th) = ScaleToFit(w, h, maxWidth, maxHeight);
+					pixels = CaptureWindowPixels(hWnd, w, h, tw, th);
+				}
+			}
+
+			return pixels is not null ? (pixels, tw, th) : default((byte[], int, int)?);
+		}).ConfigureAwait(true);
+
+		if (result is var (pixels, tw, th))
+			source.BlitThumbnail(pixels, tw, th, bottomUp: true);
 	}
 
 	public Task<byte[]?> CapturePreviewBytesAsync(CaptureSource source, int maxWidth, int maxHeight)

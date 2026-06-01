@@ -25,6 +25,9 @@ public interface IRecordingFacade
 	/// <summary>Sets the capture source for the next recording session.</summary>
 	void SetSource(Models.Recording.CaptureSource source) { }
 
+	/// <summary>Gets the path to the most recently captured frame, if any.</summary>
+	string? GetLatestFramePath() => null;
+
 	/// <summary>Starts a new recording session if one is not already active.</summary>
 	Task StartAsync(CancellationToken cancellationToken = default);
 

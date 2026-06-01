@@ -493,7 +493,8 @@
 					VerticalAlignment="Center"
 					FontSize="14"
 					Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-					Text="No preview available" />
+					Text="No preview available"
+					Visibility="{Binding PreviewImage, Converter={StaticResource NullToCollapsedConverter}, ConverterParameter=Invert}" />
 				<Image
 					Source="{Binding PreviewImage}"
 					Stretch="Uniform"

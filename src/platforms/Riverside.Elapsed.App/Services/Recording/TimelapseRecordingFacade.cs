@@ -36,6 +36,18 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 		SourceName = source.Name;
 	}
 
+	public string? GetLatestFramePath()
+	{
+		if (_framesDirectory is null || !Directory.Exists(_framesDirectory))
+			return null;
+
+		var files = Directory.GetFiles(_framesDirectory, "frame-*.jpg");
+		if (files.Length == 0) return null;
+
+		Array.Sort(files);
+		return files[^1];
+	}
+
 	public async Task StartAsync(CancellationToken cancellationToken = default)
 	{
 		if (_source is null)
@@ -120,7 +132,11 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 		var duration = _stopwatch.Elapsed;
 		string? mp4Path = null;
 
-		if (_framesDirectory is not null && _frameCount > 0)
+		int actualFrameCount = _framesDirectory is not null
+			? Directory.GetFiles(_framesDirectory, "frame-*.jpg").Length
+			: 0;
+
+		if (_framesDirectory is not null && actualFrameCount > 0)
 		{
 			mp4Path = Path.Combine(
 				Path.GetDirectoryName(_framesDirectory)!,

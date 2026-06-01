@@ -44,6 +44,13 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 		return Task.Run(() => CaptureFrameCore(source));
 	}
 
+	public async Task RefreshThumbnailAsync(CaptureSource source, int maxWidth, int maxHeight)
+	{
+		var frame = await Task.Run(() => CaptureFrameCore(source)).ConfigureAwait(true);
+		if (frame is not null)
+			source.BlitThumbnail(frame.Pixels, frame.Width, frame.Height);
+	}
+
 	private static CapturedFrame? CaptureFrameCore(CaptureSource source)
 	{
 		if (source.Kind == CaptureSourceKind.Screen)

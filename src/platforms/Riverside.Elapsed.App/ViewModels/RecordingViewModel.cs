@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -10,12 +11,18 @@ namespace Riverside.Elapsed.App.ViewModels;
 
 public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 {
+	private const int ThumbMaxWidth = 480;
+	private const int ThumbMaxHeight = 300;
+
 	private readonly IRecordingFacade _recording;
 	private readonly ICaptureSourceProvider _sourceProvider;
 	private readonly LapseService _lapse;
 	private readonly DispatcherQueueTimer? _timer;
 	private readonly DispatcherQueueTimer? _previewTimer;
+	private readonly DispatcherQueueTimer? _sourceRefreshTimer;
 	private bool _previewUpdating;
+	private bool _sourceRefreshing;
+	private Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap? _previewBitmap;
 	private string? _currentDraftId;
 
 	[ObservableProperty]
@@ -88,6 +95,10 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 			_previewTimer = dispatcher.CreateTimer();
 			_previewTimer.Interval = TimeSpan.FromSeconds(1);
 			_previewTimer.Tick += (_, _) => _ = RefreshPreviewAsync();
+
+			_sourceRefreshTimer = dispatcher.CreateTimer();
+			_sourceRefreshTimer.Interval = TimeSpan.FromMilliseconds(1500);
+			_sourceRefreshTimer.Tick += (_, _) => _ = RefreshSourcesInPlaceAsync();
 		}
 
 		_ = InitializeAsync();
@@ -249,6 +260,74 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		foreach (var source in sources)
 			CurrentSources.Add(source);
 		SelectedSource = null;
+		UpdateSourceRefreshTimer();
+	}
+
+	private async Task RefreshSourcesInPlaceAsync()
+	{
+		if (_sourceRefreshing || Phase != RecordingPhase.Setup)
+			return;
+
+		_sourceRefreshing = true;
+		try
+		{
+			var fresh = await _sourceProvider.GetSourcesAsync(SelectedSourceKind);
+			var existingById = new Dictionary<string, CaptureSource>();
+			foreach (var s in CurrentSources)
+				existingById[s.Id] = s;
+
+			var freshIds = new HashSet<string>();
+			foreach (var src in fresh)
+			{
+				freshIds.Add(src.Id);
+				if (existingById.TryGetValue(src.Id, out var existing))
+				{
+					existing.Name = src.Name;
+					existing.Description = src.Description;
+					existing.Resolution = src.Resolution;
+					if (src.Icon is not null)
+						existing.Icon = src.Icon;
+				}
+				else
+				{
+					CurrentSources.Add(src);
+				}
+			}
+
+			for (int i = CurrentSources.Count - 1; i >= 0; i--)
+			{
+				if (!freshIds.Contains(CurrentSources[i].Id))
+				{
+					if (CurrentSources[i] == SelectedSource)
+						SelectedSource = null;
+					CurrentSources.RemoveAt(i);
+				}
+			}
+
+			foreach (var source in CurrentSources)
+			{
+				try
+				{
+					await _sourceProvider.RefreshThumbnailAsync(source, ThumbMaxWidth, ThumbMaxHeight);
+				}
+				catch { }
+			}
+		}
+		catch { }
+		finally
+		{
+			_sourceRefreshing = false;
+		}
+	}
+
+	private void UpdateSourceRefreshTimer()
+	{
+		if (_sourceRefreshTimer is null) return;
+
+		if (Phase == RecordingPhase.Setup)
+			_sourceRefreshTimer.Start();
+		else
+			_sourceRefreshTimer.Stop();
 	}
 
 	private void UpdatePreviewTimer()
@@ -259,6 +338,8 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 			_previewTimer.Start();
 		else
 			_previewTimer.Stop();
+
+		UpdateSourceRefreshTimer();
 	}
 
 	private async Task RefreshPreviewAsync()
@@ -269,15 +350,62 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		_previewUpdating = true;
 		try
 		{
-			var image = await _sourceProvider.CapturePreviewAsync(SelectedSource, 640, 480);
-			if (image is not null)
-				PreviewImage = image;
+			CapturedFrame? frame = null;
+
+			if (SelectedSource.Kind == CaptureSourceKind.Camera && Phase is RecordingPhase.Active or RecordingPhase.Paused)
+			{
+				var framePath = _recording.GetLatestFramePath();
+				if (framePath is not null)
+				{
+					frame = await Task.Run(() =>
+					{
+						using var codec = SkiaSharp.SKCodec.Create(framePath);
+						if (codec is null) return null;
+						var info = codec.Info.WithColorType(SkiaSharp.SKColorType.Bgra8888).WithAlphaType(SkiaSharp.SKAlphaType.Premul);
+						var pixels = new byte[info.RowBytes * info.Height];
+						codec.GetPixels(info, System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(pixels, 0));
+						return new CapturedFrame(pixels, info.Width, info.Height);
+					}).ConfigureAwait(true);
+				}
+			}
+			else
+			{
+				frame = await _sourceProvider.CaptureFrameAsync(SelectedSource).ConfigureAwait(true);
+			}
+
+			if (frame is not null)
+				BlitPreview(frame);
 		}
 		catch { }
 		finally
 		{
 			_previewUpdating = false;
 		}
+	}
+
+	private void BlitPreview(CapturedFrame frame)
+	{
+		int w = frame.Width;
+		int h = frame.Height;
+
+		if (_previewBitmap is null || _previewBitmap.PixelWidth != w || _previewBitmap.PixelHeight != h)
+		{
+			_previewBitmap = new Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap(w, h);
+			PreviewImage = _previewBitmap;
+		}
+
+		using var stream = _previewBitmap.PixelBuffer.AsStream();
+		if (frame.IsBottomUp)
+		{
+			int stride = w * 4;
+			for (int y = h - 1; y >= 0; y--)
+				stream.Write(frame.Pixels, y * stride, stride);
+		}
+		else
+		{
+			stream.Write(frame.Pixels, 0, w * h * 4);
+		}
+		_previewBitmap.Invalidate();
 	}
 
 	private async Task StartRecordingAsync()
@@ -336,6 +464,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 
 			_timer?.Stop();
 			_previewTimer?.Stop();
+			_previewBitmap = null;
 
 			Phase = RecordingPhase.Encoding;
 			RecordingStopped?.Invoke(this, EventArgs.Empty);
@@ -435,6 +564,7 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	{
 		_timer?.Stop();
 		_previewTimer?.Stop();
+		_sourceRefreshTimer?.Stop();
 		_recording.StateChanged -= OnRecordingStateChanged;
 	}
 }

@@ -15,4 +15,7 @@ public sealed class NoOpCaptureSourceProvider : ICaptureSourceProvider
 
 	public Task<CapturedFrame?> CaptureFrameAsync(CaptureSource source)
 		=> Task.FromResult<CapturedFrame?>(null);
+
+	public Task RefreshThumbnailAsync(CaptureSource source, int maxWidth, int maxHeight)
+		=> Task.CompletedTask;
 }

@@ -106,6 +106,29 @@ cd Elapsed
 - Navigate to the debug pane in the left-side activity bar
 - Run the appropriate debug profile for the platform you want to build for (or press <kbd>F5</kbd> anywhere in VS Code)
 
+##### CLI
+
+Building Elapsed with the MSBuild CLI is a great way to quickly test whether the app builds, as the MSBuild CLI does not rely on GUI-heavy apps such as Visual Studio.
+It is recommended to use the .NET Framework version of MSBuild as it works best for the tech stack that the Elapsed project consumes.
+
+- Restore the project dependencies via NuGet
+
+```bash
+msbuild -t:Restore -p:Configuration=Release
+```
+
+- Build/publish the project of your choice, such as `Riverside.Elapsed.App` for the main app project.
+
+You must specify a `TargetFramework` property when building the app project, such as `net10.0-desktop`, `net10.0-windows`, or `net10.0-browserwasm`.
+When building the Windows head of the app project, it is recommended to debug via an IDE such as Visual Studio as an IDE will provide a better experience for building WinUI apps.
+It is also recommended to make use of the `Publish` task when building the WebAssembly/WinAppSDK/Skia heads as this will ensure the output is production ready.
+
+```bash
+msbuild src\platforms\Riverside.Elapsed.App -t:Publish -p:Configuration=Release -p:TargetFramework=net10.0-desktop
+```
+
+The build output can always be found in the `bin` folder of the project root directory.
+
 <!--
 ### How to use Elapsed
 

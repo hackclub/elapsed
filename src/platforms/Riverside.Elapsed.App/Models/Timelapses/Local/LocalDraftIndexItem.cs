@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses.Local;
 
 public sealed record LocalDraftIndexItem
@@ -9,3 +10,5 @@ public sealed record LocalDraftIndexItem
 	public bool HasRemoteDraft { get; init; }
 	public string? RemoteDraftTimelapseId { get; init; }
 }
+
+#endif

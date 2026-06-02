@@ -31,11 +31,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
+		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="$(SharedDirectory)\Riverside.Elapsed\Riverside.Elapsed.csproj" />
-		<ProjectReference Include="$(SharedDirectory)\Riverside.MediaRecording\Riverside.MediaRecording.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,6 +47,16 @@
 	  <Folder Include="Services\Recording\" />
 	  <Folder Include="Services\Storage\" />
 	  <Folder Include="UserControls\" />
+	</ItemGroup>
+
+	<!-- Excluded pages/controls not part of the current MVP recording flow -->
+	<ItemGroup>
+		<Page Remove="Views\LoginPage.xaml" />
+		<Page Remove="Views\VideoPage.xaml" />
+		<Page Remove="Views\UserProfilePage.xaml" />
+		<Page Remove="UserControls\ExploreTimelapsesControl.xaml" />
+		<Page Remove="UserControls\LeaderboardControl.xaml" />
+		<Page Remove="UserControls\TimelapsePlayerControl.xaml" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">

@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,3 +11,5 @@ public enum PermissionLevel
 	Admin,
 	Root,
 }
+
+#endif

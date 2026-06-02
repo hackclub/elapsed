@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Timelapses.Local;
 
 namespace Riverside.Elapsed.App.Models.Primitives;
@@ -13,3 +14,5 @@ public interface IUploadable
 	string? UploadToken { get; init; }
 	TusUploadState Upload { get; init; }
 }
+
+#endif

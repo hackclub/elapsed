@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses;
 
 public sealed class DraftTimelapse
@@ -14,3 +15,5 @@ public sealed class DraftTimelapse
 	public IReadOnlyList<DraftEdit> EditList { get; set; } = Array.Empty<DraftEdit>();
 	public string? AssociatedTimelapseId { get; set; }
 }
+
+#endif

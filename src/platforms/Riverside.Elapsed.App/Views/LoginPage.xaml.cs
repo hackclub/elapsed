@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Views;
 
 public sealed partial class LoginPage : Page
@@ -7,3 +8,5 @@ public sealed partial class LoginPage : Page
 		this.InitializeComponent();
 	}
 }
+
+#endif

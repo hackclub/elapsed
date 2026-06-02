@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.Timelapses.Local;
 
 public class TusUploadState
@@ -12,3 +13,5 @@ public class TusUploadState
 	public DateTimeOffset StartedAt { get; init; }
 	public DateTimeOffset? CompletedAt { get; init; }
 }
+
+#endif

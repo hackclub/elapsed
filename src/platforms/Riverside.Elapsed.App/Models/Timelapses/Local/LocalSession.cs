@@ -1,3 +1,4 @@
+#if false
 using Riverside.Elapsed.App.Models.Primitives;
 
 namespace Riverside.Elapsed.App.Models.Timelapses.Local;
@@ -12,3 +13,5 @@ public sealed record LocalSession : IUploadable
 	public string? UploadToken { get; init; }
 	public TusUploadState Upload { get; init; } = new();
 }
+
+#endif

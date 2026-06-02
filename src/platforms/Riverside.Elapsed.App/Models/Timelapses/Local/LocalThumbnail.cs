@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,3 +14,5 @@ public sealed record LocalThumbnail : IUploadable
 	public string? UploadToken { get; init; }
 	public TusUploadState Upload { get; init; } = new();
 }
+
+#endif

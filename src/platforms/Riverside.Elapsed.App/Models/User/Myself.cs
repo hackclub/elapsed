@@ -1,3 +1,4 @@
+#if false
 namespace Riverside.Elapsed.App.Models.User;
 
 public sealed class Myself : User
@@ -6,3 +7,5 @@ public sealed class Myself : User
 	public bool NeedsReauth { get; set; }
 	public PermissionLevel PermissionLevel { get; set; }
 }
+
+#endif

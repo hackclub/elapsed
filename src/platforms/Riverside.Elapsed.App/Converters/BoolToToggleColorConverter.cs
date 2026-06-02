@@ -3,7 +3,7 @@ using Microsoft.UI;
 
 namespace Riverside.Elapsed.App.Converters;
 
-public sealed class BoolToToggleColorConverter : BoolToObjectConverter
+public sealed partial class BoolToToggleColorConverter : BoolToObjectConverter
 {
 	public BoolToToggleColorConverter()
 	{

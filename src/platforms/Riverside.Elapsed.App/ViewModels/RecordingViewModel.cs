@@ -26,49 +26,49 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	private string? _currentDraftId;
 
 	[ObservableProperty]
-	private CaptureSourceKind _selectedSourceKind = CaptureSourceKind.Screen;
+	private partial CaptureSourceKind SelectedSourceKind { get; set; } = CaptureSourceKind.Screen;
 
 	[ObservableProperty]
-	private CaptureSource? _selectedSource;
+	private partial CaptureSource? SelectedSource { get; set; }
 
 	[ObservableProperty]
-	private RecordingPhase _phase = RecordingPhase.Setup;
+	private partial RecordingPhase Phase { get; set; } = RecordingPhase.Setup;
 
 	[ObservableProperty]
-	private string _elapsedDisplay = "00:00:00";
+	private partial string ElapsedDisplay { get; set; } = "00:00:00";
 
 	[ObservableProperty]
-	private string? _statusMessage;
+	private partial string? StatusMessage { get; set; }
 
 	[ObservableProperty]
-	private ImageSource? _previewImage;
+	private partial ImageSource? PreviewImage { get; set; }
 
 	[ObservableProperty]
-	private double _uploadProgress;
+	private partial double UploadProgress { get; set; }
 
 	[ObservableProperty]
-	private string? _uploadStatusText;
+	private partial string? UploadStatusText { get; set; }
 
 	[ObservableProperty]
-	private string _publishTitle = "";
+	private partial string PublishTitle { get; set; } = "";
 
 	[ObservableProperty]
-	private string _publishDescription = "";
+	private partial string PublishDescription { get; set; } = "";
 
 	[ObservableProperty]
-	private int _publishVisibilityIndex;
+	private partial int PublishVisibilityIndex { get; set; }
 
 	[ObservableProperty]
-	private bool _isSignedIn;
+	private partial bool IsSignedIn { get; set; }
 
 	[ObservableProperty]
-	private string? _userDisplayName;
+	private partial string? UserDisplayName { get; set; }
 
 	[ObservableProperty]
-	private string? _userHandle;
+	private partial string? UserHandle { get; set; }
 
 	[ObservableProperty]
-	private ImageSource? _userProfilePicture;
+	private partial ImageSource? UserProfilePicture { get; set; }
 
 	public RecordingViewModel(IRecordingFacade recording, ICaptureSourceProvider sourceProvider, LapseService lapse)
 	{

@@ -234,7 +234,7 @@
 				</Button>
 
 				<!-- sign-in button (unauthenticated) -->
-				<Button Command="{Binding SignInCommand}" Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+				<Button Command="{Binding SignInCommand}" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
 					<StackPanel Orientation="Horizontal" Spacing="6">
 						<FontIcon FontSize="13" Glyph="&#xE77B;" />
 						<TextBlock Text="Sign in" />

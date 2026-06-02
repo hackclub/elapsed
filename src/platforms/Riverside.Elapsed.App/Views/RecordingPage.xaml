@@ -9,7 +9,10 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition x:Name="ControlsColumn" Width="*" MinWidth="320" />
+			<ColumnDefinition
+				x:Name="ControlsColumn"
+				Width="*"
+				MinWidth="320" />
 			<ColumnDefinition x:Name="PreviewColumn" Width="0" />
 		</Grid.ColumnDefinitions>
 
@@ -37,17 +40,17 @@
 						</Grid.ColumnDefinitions>
 						<StackPanel
 							Grid.Column="0"
+							VerticalAlignment="Center"
 							Orientation="Horizontal"
-							Spacing="8"
-							VerticalAlignment="Center">
+							Spacing="8">
 							<Image
 								Width="28"
 								Height="28"
 								Source="ms-appx:///Assets/Icons/brand-icon.png" />
 							<TextBlock
+								VerticalAlignment="Center"
 								FontSize="18"
 								FontWeight="SemiBold"
-								VerticalAlignment="Center"
 								Text="Elapsed" />
 						</StackPanel>
 
@@ -56,10 +59,13 @@
 							Grid.Column="1"
 							Padding="8,4"
 							Command="{Binding SignInCommand}"
-							Visibility="{Binding IsSignedIn, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+							Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
 							<StackPanel Orientation="Horizontal" Spacing="6">
 								<FontIcon FontSize="14" Glyph="&#xE77B;" />
-								<TextBlock FontSize="12" Text="Sign In" VerticalAlignment="Center" />
+								<TextBlock
+									VerticalAlignment="Center"
+									FontSize="12"
+									Text="Sign In" />
 							</StackPanel>
 						</Button>
 
@@ -79,28 +85,20 @@
 									Fill="{ThemeResource ControlFillColorSecondaryBrush}" />
 								<Ellipse Width="28" Height="28">
 									<Ellipse.Fill>
-										<ImageBrush
-											ImageSource="{Binding UserProfilePicture}"
-											Stretch="UniformToFill" />
+										<ImageBrush ImageSource="{Binding UserProfilePicture}" Stretch="UniformToFill" />
 									</Ellipse.Fill>
 								</Ellipse>
 							</Grid>
 							<Button.Flyout>
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
-									<MenuFlyoutItem
-										Text="{Binding UserDisplayName}"
-										IsEnabled="False" />
+									<MenuFlyoutItem IsEnabled="False" Text="{Binding UserDisplayName}" />
 									<MenuFlyoutSeparator />
-									<MenuFlyoutItem
-										Text="View Profile"
-										Command="{Binding ViewProfileCommand}">
+									<MenuFlyoutItem Command="{Binding ViewProfileCommand}" Text="View Profile">
 										<MenuFlyoutItem.Icon>
 											<FontIcon Glyph="&#xE77B;" />
 										</MenuFlyoutItem.Icon>
 									</MenuFlyoutItem>
-									<MenuFlyoutItem
-										Text="Sign Out"
-										Command="{Binding SignOutCommand}">
+									<MenuFlyoutItem Command="{Binding SignOutCommand}" Text="Sign Out">
 										<MenuFlyoutItem.Icon>
 											<FontIcon Glyph="&#xE7E8;" />
 										</MenuFlyoutItem.Icon>
@@ -150,23 +148,27 @@
 					</Grid>
 
 					<!-- Source grid -->
-					<ScrollViewer x:Name="SourceScrollViewer" Grid.Row="2" Margin="0,0,0,16" SizeChanged="OnSourceScrollViewerSizeChanged">
+					<ScrollViewer
+						x:Name="SourceScrollViewer"
+						Grid.Row="2"
+						Margin="0,0,0,16"
+						SizeChanged="OnSourceScrollViewerSizeChanged">
 						<ItemsRepeater ItemsSource="{Binding CurrentSources}">
 							<ItemsRepeater.Layout>
 								<UniformGridLayout
 									x:Name="SourceGridLayout"
-									MinItemWidth="158"
-									MinItemHeight="148"
 									MinColumnSpacing="6"
+									MinItemHeight="148"
+									MinItemWidth="158"
 									MinRowSpacing="6" />
 							</ItemsRepeater.Layout>
 							<ItemsRepeater.ItemTemplate>
 								<DataTemplate>
 									<Border
-										CornerRadius="8"
 										Background="{ThemeResource ControlFillColorDefaultBrush}"
 										BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
 										BorderThickness="1"
+										CornerRadius="8"
 										PointerPressed="OnSourceCardPressed">
 										<Grid>
 											<Grid.RowDefinitions>
@@ -175,21 +177,24 @@
 											</Grid.RowDefinitions>
 											<Border
 												Grid.Row="0"
-												CornerRadius="7,7,0,0"
-												Background="{ThemeResource ControlFillColorTertiaryBrush}">
+												Background="{ThemeResource ControlFillColorTertiaryBrush}"
+												CornerRadius="7,7,0,0">
 												<Image
-													Source="{Binding Thumbnail}"
-													Stretch="UniformToFill"
 													HorizontalAlignment="Center"
-													VerticalAlignment="Center" />
+													VerticalAlignment="Center"
+													Source="{Binding Thumbnail}"
+													Stretch="UniformToFill" />
 											</Border>
-											<StackPanel Grid.Row="1" Padding="8,6,8,6" Spacing="1">
+											<StackPanel
+												Grid.Row="1"
+												Padding="8,6,8,6"
+												Spacing="1">
 												<StackPanel Orientation="Horizontal" Spacing="4">
 													<Image
-														Source="{Binding Icon}"
 														Width="14"
 														Height="14"
 														VerticalAlignment="Center"
+														Source="{Binding Icon}"
 														Visibility="{Binding Icon, Converter={StaticResource NullToCollapsedConverter}}" />
 													<TextBlock
 														FontSize="11"
@@ -223,24 +228,27 @@
 						Grid.Row="3"
 						Margin="0,0,0,8"
 						Padding="12"
-						CornerRadius="8"
 						Background="{ThemeResource ControlFillColorSecondaryBrush}"
-						Visibility="{Binding IsSignedIn, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-						<StackPanel Spacing="8" HorizontalAlignment="Center">
+						CornerRadius="8"
+						Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
+						<StackPanel HorizontalAlignment="Center" Spacing="8">
 							<TextBlock
+								HorizontalAlignment="Center"
 								FontSize="12"
 								Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-								HorizontalAlignment="Center"
+								Text="Sign in to your Lapse account to start recording timelapses."
 								TextAlignment="Center"
-								TextWrapping="Wrap"
-								Text="Sign in to your Lapse account to start recording timelapses." />
+								TextWrapping="Wrap" />
 							<Button
 								HorizontalAlignment="Center"
 								Command="{Binding SignInCommand}"
 								Style="{ThemeResource AccentButtonStyle}">
 								<StackPanel Orientation="Horizontal" Spacing="6">
 									<FontIcon FontSize="14" Glyph="&#xE77B;" />
-									<TextBlock FontSize="12" Text="Sign In" VerticalAlignment="Center" />
+									<TextBlock
+										VerticalAlignment="Center"
+										FontSize="12"
+										Text="Sign In" />
 								</StackPanel>
 							</Button>
 						</StackPanel>
@@ -253,23 +261,23 @@
 						HorizontalAlignment="Stretch"
 						Command="{Binding StartRecordingCommand}"
 						CornerRadius="22"
-						Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}}"
-						Style="{ThemeResource AccentButtonStyle}">
+						Style="{ThemeResource AccentButtonStyle}"
+						Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}}">
 						<StackPanel Orientation="Horizontal" Spacing="8">
 							<FontIcon FontSize="14" Glyph="&#xE7C8;" />
 							<TextBlock
+								VerticalAlignment="Center"
 								FontSize="14"
 								FontWeight="SemiBold"
-								Text="Start Recording"
-								VerticalAlignment="Center" />
+								Text="Start Recording" />
 						</StackPanel>
 					</Button>
 				</Grid>
 
 				<!-- Active recording state -->
 				<StackPanel
-					Spacing="16"
 					VerticalAlignment="Center"
+					Spacing="16"
 					Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibilityConverter}}">
 
 					<!-- Recording indicator -->
@@ -283,17 +291,17 @@
 							VerticalAlignment="Center"
 							Fill="Red" />
 						<TextBlock
+							VerticalAlignment="Center"
 							FontSize="14"
 							FontWeight="SemiBold"
-							VerticalAlignment="Center"
 							Text="{Binding IsPaused, Converter={StaticResource BoolToPausedRecordingLabelConverter}}" />
 					</StackPanel>
 
 					<!-- Elapsed time -->
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="48"
 						FontWeight="SemiBold"
-						HorizontalAlignment="Center"
 						Text="{Binding ElapsedDisplay}" />
 
 					<!-- Controls -->
@@ -324,9 +332,9 @@
 
 					<!-- Status -->
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="12"
 						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-						HorizontalAlignment="Center"
 						Text="{Binding StatusMessage}"
 						TextWrapping="Wrap"
 						Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
@@ -334,70 +342,70 @@
 
 				<!-- Encoding state -->
 				<StackPanel
-					Spacing="16"
-					VerticalAlignment="Center"
 					HorizontalAlignment="Stretch"
+					VerticalAlignment="Center"
+					Spacing="16"
 					Visibility="{Binding IsEncoding, Converter={StaticResource BoolToVisibilityConverter}}">
 
 					<FontIcon
-						FontSize="32"
 						HorizontalAlignment="Center"
+						FontSize="32"
 						Glyph="&#xE714;" />
 
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="18"
 						FontWeight="SemiBold"
-						HorizontalAlignment="Center"
 						Text="Encoding Video" />
 
 					<ProgressBar
-						IsIndeterminate="True"
+						Margin="40,0"
 						HorizontalAlignment="Stretch"
-						Margin="40,0" />
+						IsIndeterminate="True" />
 
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="12"
 						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-						HorizontalAlignment="Center"
 						Text="Preparing your timelapse..." />
 				</StackPanel>
 
 				<!-- Uploading state -->
 				<StackPanel
-					Spacing="16"
-					VerticalAlignment="Center"
 					HorizontalAlignment="Stretch"
+					VerticalAlignment="Center"
+					Spacing="16"
 					Visibility="{Binding IsUploading, Converter={StaticResource BoolToVisibilityConverter}}">
 
 					<FontIcon
-						FontSize="32"
 						HorizontalAlignment="Center"
+						FontSize="32"
 						Glyph="&#xE898;" />
 
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="18"
 						FontWeight="SemiBold"
-						HorizontalAlignment="Center"
 						Text="Uploading to Lapse" />
 
 					<ProgressBar
-						HorizontalAlignment="Stretch"
 						Margin="40,0"
+						HorizontalAlignment="Stretch"
 						Maximum="1"
 						Value="{Binding UploadProgress}" />
 
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="12"
 						Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-						HorizontalAlignment="Center"
 						Text="{Binding UploadStatusText}"
 						TextWrapping="Wrap" />
 
 					<!-- Error status -->
 					<TextBlock
+						HorizontalAlignment="Center"
 						FontSize="12"
 						Foreground="Red"
-						HorizontalAlignment="Center"
 						Text="{Binding StatusMessage}"
 						TextWrapping="Wrap"
 						Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
@@ -405,39 +413,39 @@
 
 				<!-- Publishing state: title, description, visibility form -->
 				<Grid
-					VerticalAlignment="Center"
 					HorizontalAlignment="Stretch"
+					VerticalAlignment="Center"
 					Visibility="{Binding IsPublishing, Converter={StaticResource BoolToVisibilityConverter}}">
-					<StackPanel Spacing="16" Margin="20,0">
+					<StackPanel Margin="20,0" Spacing="16">
 						<FontIcon
-							FontSize="28"
 							HorizontalAlignment="Center"
+							FontSize="28"
 							Glyph="&#xE70F;" />
 
 						<TextBlock
+							HorizontalAlignment="Center"
 							FontSize="18"
 							FontWeight="SemiBold"
-							HorizontalAlignment="Center"
 							Text="Publish Timelapse" />
 
 						<TextBox
 							Header="Title"
-							PlaceholderText="Give your timelapse a name"
 							MaxLength="60"
+							PlaceholderText="Give your timelapse a name"
 							Text="{Binding PublishTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 						<TextBox
-							Header="Description"
-							PlaceholderText="What were you working on?"
-							MaxLength="280"
-							AcceptsReturn="True"
-							TextWrapping="Wrap"
 							Height="80"
-							Text="{Binding PublishDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							AcceptsReturn="True"
+							Header="Description"
+							MaxLength="280"
+							PlaceholderText="What were you working on?"
+							Text="{Binding PublishDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							TextWrapping="Wrap" />
 
 						<ComboBox
-							Header="Visibility"
 							HorizontalAlignment="Stretch"
+							Header="Visibility"
 							ItemsSource="{Binding VisibilityOptions}"
 							SelectedIndex="{Binding PublishVisibilityIndex, Mode=TwoWay}" />
 
@@ -450,27 +458,27 @@
 							<StackPanel Orientation="Horizontal" Spacing="8">
 								<FontIcon FontSize="14" Glyph="&#xE898;" />
 								<TextBlock
+									VerticalAlignment="Center"
 									FontSize="14"
 									FontWeight="SemiBold"
-									Text="Publish"
-									VerticalAlignment="Center" />
+									Text="Publish" />
 							</StackPanel>
 						</Button>
 
 						<!-- Status text during publish -->
 						<TextBlock
+							HorizontalAlignment="Center"
 							FontSize="12"
 							Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-							HorizontalAlignment="Center"
 							Text="{Binding UploadStatusText}"
 							TextWrapping="Wrap"
 							Visibility="{Binding UploadStatusText, Converter={StaticResource NullToCollapsedConverter}}" />
 
 						<!-- Error status -->
 						<TextBlock
+							HorizontalAlignment="Center"
 							FontSize="12"
 							Foreground="Red"
-							HorizontalAlignment="Center"
 							Text="{Binding StatusMessage}"
 							TextWrapping="Wrap"
 							Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsedConverter}}" />
@@ -496,11 +504,11 @@
 					Text="No preview available"
 					Visibility="{Binding PreviewImage, Converter={StaticResource NullToCollapsedConverter}, ConverterParameter=Invert}" />
 				<Image
-					Source="{Binding PreviewImage}"
-					Stretch="Uniform"
+					Margin="16"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
-					Margin="16" />
+					Source="{Binding PreviewImage}"
+					Stretch="Uniform" />
 			</Grid>
 		</Border>
 	</Grid>

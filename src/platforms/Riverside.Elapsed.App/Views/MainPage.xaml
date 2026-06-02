@@ -22,7 +22,7 @@
 					BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
 					BorderThickness="1"
 					CornerRadius="12"
-					Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
@@ -89,7 +89,7 @@
 				Text="{Binding FooterText}"
 				TextAlignment="Center"
 				TextWrapping="Wrap"
-				Visibility="{Binding IsWebPlatform, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				Visibility="{Binding IsWebPlatform, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}" />
 		</Grid>
 	</Grid>
 </Page>

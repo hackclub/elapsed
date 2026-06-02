@@ -1,16 +1,12 @@
-using Microsoft.UI.Xaml.Data;
+using CommunityToolkit.WinUI.Converters;
 
 namespace Riverside.Elapsed.App.Converters;
 
-public sealed class BoolToPausedRecordingLabelConverter : IValueConverter
+public sealed partial class BoolToPausedRecordingLabelConverter : BoolToObjectConverter
 {
-	public object Convert(object value, Type targetType, object parameter, string language)
+	public BoolToPausedRecordingLabelConverter()
 	{
-		return value is true ? "Paused" : "Recording";
-	}
-
-	public object ConvertBack(object value, Type targetType, object parameter, string language)
-	{
-		throw new NotSupportedException();
+		TrueValue = "Paused";
+		FalseValue = "Recording";
 	}
 }

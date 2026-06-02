@@ -1,19 +1,13 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
+using CommunityToolkit.WinUI.Converters;
+using Microsoft.UI;
 
 namespace Riverside.Elapsed.App.Converters;
 
-public sealed class BoolToToggleColorConverter : IValueConverter
+public sealed class BoolToToggleColorConverter : BoolToObjectConverter
 {
-	private static readonly SolidColorBrush TrueBrush = new(Microsoft.UI.Colors.DodgerBlue);
-	private static readonly SolidColorBrush FalseBrush = new(Microsoft.UI.Colors.Coral);
-
-	public object Convert(object value, Type targetType, object parameter, string language)
-		=> value is true ? TrueBrush : FalseBrush;
-
-	public object ConvertBack(object value, Type targetType, object parameter, string language)
+	public BoolToToggleColorConverter()
 	{
-		throw new NotSupportedException();
+		TrueValue = new SolidColorBrush(Colors.DodgerBlue); ;
+		FalseValue = new SolidColorBrush(Colors.Coral);
 	}
 }

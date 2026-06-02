@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
+		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
 	</ItemGroup>
 
 	<ItemGroup>

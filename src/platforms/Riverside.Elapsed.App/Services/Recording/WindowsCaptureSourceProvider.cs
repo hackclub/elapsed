@@ -1,4 +1,3 @@
-#if HAS_MEDIA_RECORDING
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -741,4 +740,3 @@ public sealed class WindowsCaptureSourceProvider : ICaptureSourceProvider
 		}
 	}
 }
-#endif

@@ -13,7 +13,7 @@ public partial class App : Application
 		InitializeComponent();
 	}
 
-	protected Window? MainWindow { get; private set; }
+	public static Window? MainWindow { get; private set; }
 
 	[SuppressMessage("Trimming", "IL2026", Justification = "Uno app builder usage is trim-safe for configured features.")]
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -33,10 +33,11 @@ public partial class App : Application
 				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
 				.UseConfiguration(configure: (IConfigBuilder configBuilder) => configBuilder
 					.EmbeddedSource<App>()
-					.Section<AppConfig>())
+					// .Section<AppConfig>()
+					)
 				.UseLocalization()
 				.ConfigureServices((context, services) => { })
-				.UseNavigation(RegisterRoutes)
+				//.UseNavigation(RegisterRoutes)
 				.UseSerialization(serialization => serialization.AddSingleton(Constants.SerializerOptions))
 			);
 
@@ -47,7 +48,6 @@ public partial class App : Application
 #endif
 		MainWindow.SetWindowIcon();
 
-#if HAS_MEDIA_RECORDING
 		ICaptureSourceProvider sourceProvider;
 
 		if (OperatingSystem.IsWindows())
@@ -60,10 +60,10 @@ public partial class App : Application
 			sourceProvider = new NoOpCaptureSourceProvider();
 
 		IRecordingFacade recording = new TimelapseRecordingFacade(sourceProvider);
-#else
+		/*
 		IRecordingFacade recording = new NoOpRecordingFacade();
 		ICaptureSourceProvider sourceProvider = new NoOpCaptureSourceProvider();
-#endif
+		*/
 
 		var lapse = new LapseService();
 
@@ -71,18 +71,19 @@ public partial class App : Application
 		{
 			//var authService = services.GetRequiredService<ILapseAuthService>();
 			//await authService.TryRestoreSessionAsync();
-			await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
+			//await navigator.NavigateViewModelAsync<MainViewModel>(this, qualifier: Qualifiers.Nested);
 			DataContext = new RecordingViewModel(recording, sourceProvider, lapse)
 		};
 		MainWindow.Activate();
 	}
 
+	/*
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 		views.Register(
 			new ViewMap<Shell, ShellViewModel>(),
 			//new ViewMap<LoginPage, LoginViewModel>(),
-			new ViewMap<MainPage, MainViewModel>()
+			//new ViewMap<MainPage, MainViewModel>()
 			//new ViewMap<VideoPage, PlayerViewModel>(),
 			//new ViewMap<RecordingPage, RecordingViewModel>(),
 			//new ViewMap<UserProfilePage, UserProfileViewModel>()
@@ -95,12 +96,12 @@ public partial class App : Application
 				Nested:
 				[
 					//new RouteMap("Login", View: views.FindByViewModel<LoginViewModel>()),
-					new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(), IsDefault: true),
+					//new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(), IsDefault: true),
 					//new RouteMap("Video", View: views.FindByViewModel<PlayerViewModel>()),
 					//new RouteMap("Recording", View: views.FindByViewModel<RecordingViewModel>()),
 					//new RouteMap("UserProfile", View: views.FindByViewModel<UserProfileViewModel>()),
 				]
 			)
 		);
-	}
+	} */
 }

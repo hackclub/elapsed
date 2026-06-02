@@ -10,8 +10,18 @@
 			https://aka.platform.uno/singleproject-features
 		-->
 		<UnoFeatures>
+			Lottie;
+			Hosting;
 			Toolkit;
+			Logging;
+			LoggingSerilog;
 			Mvvm;
+			Configuration;
+			HttpKiota;
+			Serialization;
+			Localization;
+			Authentication;
+			Navigation;
 			ThemeService;
 			SkiaRenderer;
 		</UnoFeatures>
@@ -41,9 +51,7 @@
 
 	<!-- Excluded pages/controls not part of the current MVP recording flow -->
 	<ItemGroup>
-		<Page Remove="Views\Shell.xaml" />
 		<Page Remove="Views\LoginPage.xaml" />
-		<Page Remove="Views\MainPage.xaml" />
 		<Page Remove="Views\VideoPage.xaml" />
 		<Page Remove="Views\UserProfilePage.xaml" />
 		<Page Remove="UserControls\ExploreTimelapsesControl.xaml" />

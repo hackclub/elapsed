@@ -74,7 +74,7 @@ public sealed partial class RecordingPage : Page
 
 	private void OnFocusRequested(object? sender, EventArgs e)
 	{
-		var window = App.CurrentMainWindow;
+		var window = App.MainWindow;
 		if (window is null) return;
 
 		window.Activate();
@@ -125,7 +125,7 @@ public sealed partial class RecordingPage : Page
 
 	private static void SetWindowMinSize(int width, int height)
 	{
-		var window = App.CurrentMainWindow;
+		var window = App.MainWindow;
 		if (window is null) return;
 
 		var scale = window.Content?.XamlRoot?.RasterizationScale ?? 1.0;

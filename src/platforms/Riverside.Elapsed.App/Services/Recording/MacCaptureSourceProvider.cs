@@ -1,4 +1,3 @@
-#if HAS_MEDIA_RECORDING
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Riverside.Elapsed.App.Models.Recording;
@@ -454,4 +453,3 @@ public sealed class MacCaptureSourceProvider : ICaptureSourceProvider
 		public static extern nint CFStringCreateWithCString(nint alloc, [MarshalAs(UnmanagedType.LPUTF8Str)] string cStr, uint encoding);
 	}
 }
-#endif

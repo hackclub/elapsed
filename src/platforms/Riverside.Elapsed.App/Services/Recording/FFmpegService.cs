@@ -1,4 +1,3 @@
-#if HAS_MEDIA_RECORDING
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -318,4 +317,3 @@ internal static partial class FFmpegService
 	[GeneratedRegex(@"\[(\d+)\]\s+(.+)")]
 	private static partial Regex AvfoundationDeviceRegex();
 }
-#endif

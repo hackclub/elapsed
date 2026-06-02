@@ -1,4 +1,3 @@
-#if HAS_MEDIA_RECORDING
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -390,4 +389,3 @@ public sealed class LinuxCaptureSourceProvider : ICaptureSourceProvider
 		public static extern nint XInternAtom(nint display, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, bool onlyIfExists);
 	}
 }
-#endif

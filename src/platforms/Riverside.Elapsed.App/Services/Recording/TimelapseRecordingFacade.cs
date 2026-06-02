@@ -1,4 +1,3 @@
-#if HAS_MEDIA_RECORDING
 using System.Diagnostics;
 using Riverside.Elapsed.App.Models.Recording;
 using SkiaSharp;
@@ -228,4 +227,3 @@ internal sealed class TimelapseRecordingFacade : IRecordingFacade
 		}
 	}
 }
-#endif

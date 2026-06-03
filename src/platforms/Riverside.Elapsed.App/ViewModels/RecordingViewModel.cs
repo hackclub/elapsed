@@ -26,10 +26,10 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	private string? _currentDraftId;
 
 	[ObservableProperty]
-	private partial CaptureSourceKind SelectedSourceKind { get; set; } = CaptureSourceKind.Screen;
+	public partial CaptureSourceKind SelectedSourceKind { get; set; } = CaptureSourceKind.Screen;
 
 	[ObservableProperty]
-	private partial CaptureSource? SelectedSource { get; set; }
+	public partial CaptureSource? SelectedSource { get; set; }
 
 	[ObservableProperty]
 	private partial RecordingPhase Phase { get; set; } = RecordingPhase.Setup;

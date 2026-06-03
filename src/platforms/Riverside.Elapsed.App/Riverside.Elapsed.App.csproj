@@ -30,8 +30,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
-		<PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
+		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="CommunityToolkit.WinUI.Converters" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,14 +39,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Converters\" />
-	  <Folder Include="Extensions\" />
-	  <Folder Include="Services\Api\" />
-	  <Folder Include="Services\Auth\" />
-	  <Folder Include="Services\Drafts\" />
-	  <Folder Include="Services\Recording\" />
-	  <Folder Include="Services\Storage\" />
-	  <Folder Include="UserControls\" />
+		<Folder Include="Converters\" />
+		<Folder Include="Extensions\" />
+		<Folder Include="Services\Api\" />
+		<Folder Include="Services\Auth\" />
+		<Folder Include="Services\Drafts\" />
+		<Folder Include="Services\Recording\" />
+		<Folder Include="Services\Storage\" />
+		<Folder Include="UserControls\" />
 	</ItemGroup>
 
 	<!-- Excluded pages/controls not part of the current MVP recording flow -->
@@ -58,10 +58,6 @@
 		<Page Remove="UserControls\LeaderboardControl.xaml" />
 		<Page Remove="UserControls\TimelapsePlayerControl.xaml" />
 	</ItemGroup>
-
-	<PropertyGroup Condition="$(TargetFramework.Contains('-desktop')) or $(TargetFramework.Contains('-windows'))">
-		<DefineConstants>$(DefineConstants);HAS_MEDIA_RECORDING</DefineConstants>
-	</PropertyGroup>
 
 	<Target Name="GenerateBuildInfo" BeforeTargets="MarkupCompilePass1;XamlPreCompile;CoreCompile">
 		<PropertyGroup>

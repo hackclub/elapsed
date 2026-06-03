@@ -1,2 +1,26 @@
 <Project>
+	<!--
+		To update the version of Uno, you should instead update the Sdk version in the global.json file.
+
+		See https://aka.platform.uno/using-uno-sdk for more information.
+		See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
+	-->
+	<ItemGroup>
+		<PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="3.119.0" />
+		<PackageVersion Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
+		<PackageVersion Include="Riverside.CompilerPlatform.CSharp.Features.Kiota" Version="1.6.260314" />
+		<PackageVersion Include="System.Net.Http.Json" Version="10.0.4" />
+		<PackageVersion Include="System.Text.Json" Version="10.0.4" />
+		<PackageVersion Include="OwlCore.Storage" Version="0.15.0" />
+		<PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.275" />
+		<PackageVersion Include="Polyfill" Version="9.18.0" />
+		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+		<PackageVersion Include="System.CommandLine" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(UsingUnoSdk) != 'true'">
+		<PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="10.0.34" />
+	</ItemGroup>
 </Project>

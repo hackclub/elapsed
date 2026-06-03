@@ -10,12 +10,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Polyfill" Version="9.18.0">
+		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="OwlCore.Storage" Version="0.15.0" />
-		<PackageReference Include="System.Net.Http.Json" Version="10.0.5" />
-		<PackageReference Include="System.Text.Json" Version="10.0.5" />
+		<PackageReference Include="OwlCore.Storage" />
+		<PackageReference Include="System.Net.Http.Json" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 </Project>

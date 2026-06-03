@@ -15,9 +15,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Riverside.CompilerPlatform.CSharp.Features.Kiota" Version="1.6.260314" />
-		<PackageReference Include="System.Net.Http.Json" Version="10.0.4" />
-		<PackageReference Include="System.Text.Json" Version="10.0.4" />
+		<PackageReference Include="Riverside.CompilerPlatform.CSharp.Features.Kiota" />
+		<PackageReference Include="System.Net.Http.Json" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 
 	<Target Name="DownloadSourceGeneratorInput" BeforeTargets="CoreCompile">

@@ -20,5 +20,11 @@
 		<Project Path="src/core/Riverside.ResumableUploads/Riverside.ResumableUploads.csproj" />
 		<Project Path="src/core/Riverside.Elapsed/Riverside.Elapsed.csproj" />
 	</Folder>
+	<Folder Name="/src/server/">
+		<Project Path="src/server/Riverside.Elapsed.Server/Riverside.Elapsed.Server.csproj">
+			<Deploy />
+		</Project>
+		<Project Path="src/server/Riverside.Elapsed.DataContracts/Riverside.Elapsed.DataContracts.csproj" />
+	</Folder>
 	<Folder Name="/tests/" />
 </Solution>

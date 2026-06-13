@@ -40,24 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Converters\" />
-		<Folder Include="Extensions\" />
-		<Folder Include="Services\Api\" />
-		<Folder Include="Services\Auth\" />
-		<Folder Include="Services\Drafts\" />
-		<Folder Include="Services\Recording\" />
-		<Folder Include="Services\Storage\" />
-		<Folder Include="UserControls\" />
-	</ItemGroup>
-
-	<!-- Excluded pages/controls not part of the current MVP recording flow -->
-	<ItemGroup>
-		<Page Remove="Views\LoginPage.xaml" />
-		<Page Remove="Views\VideoPage.xaml" />
-		<Page Remove="Views\UserProfilePage.xaml" />
-		<Page Remove="UserControls\ExploreTimelapsesControl.xaml" />
-		<Page Remove="UserControls\LeaderboardControl.xaml" />
-		<Page Remove="UserControls\TimelapsePlayerControl.xaml" />
+		<None Include="Assets\Icons\icon_foreground.svg" Pack="true" PackagePath="Assets\Icons\" />
 	</ItemGroup>
 
 	<Target Name="GenerateBuildInfo" BeforeTargets="MarkupCompilePass1;XamlPreCompile;CoreCompile">

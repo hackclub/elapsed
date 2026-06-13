@@ -46,7 +46,7 @@
 							<Image
 								Width="28"
 								Height="28"
-								Source="ms-appx:///Assets/Icons/brand-icon.png" />
+								Source="ms-appx:///Assets/Icons/iconLogo.targetsize-256.png" />
 							<TextBlock
 								VerticalAlignment="Center"
 								FontSize="18"

@@ -1,4 +1,5 @@
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Riverside.Elapsed.App.Models.Recording;
 using Riverside.Elapsed.App.ViewModels;
 
@@ -133,5 +134,10 @@ public sealed partial class RecordingPage : Page
 		var scaledHeight = (int)(height * scale);
 
 		window.AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = scaledWidth, Height = scaledHeight });
+	}
+
+	private void ProfilePersonPicture_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+	{
+		FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
 	}
 }

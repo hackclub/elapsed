@@ -54,42 +54,17 @@
 								Text="Elapsed" />
 						</StackPanel>
 
-						<!-- Sign in button (when not authenticated) -->
-						<Button
-							Grid.Column="1"
-							Padding="8,4"
-							Command="{Binding SignInCommand}"
-							Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
-							<StackPanel Orientation="Horizontal" Spacing="6">
-								<FontIcon FontSize="14" Glyph="&#xE77B;" />
-								<TextBlock
-									VerticalAlignment="Center"
-									FontSize="12"
-									Text="Sign In" />
-							</StackPanel>
-						</Button>
-
-						<!-- Profile button (when authenticated) -->
-						<Button
+						<!-- Profile picture -->
+						<PersonPicture
+							x:Name="ProfilePersonPicture"
 							Grid.Column="1"
 							Width="32"
 							Height="32"
-							Padding="0"
-							Background="Transparent"
-							BorderThickness="0"
-							Visibility="{Binding IsSignedIn, Converter={StaticResource BoolToVisibilityConverter}}">
-							<Grid>
-								<Ellipse
-									Width="28"
-									Height="28"
-									Fill="{ThemeResource ControlFillColorSecondaryBrush}" />
-								<Ellipse Width="28" Height="28">
-									<Ellipse.Fill>
-										<ImageBrush ImageSource="{Binding UserProfilePicture}" Stretch="UniformToFill" />
-									</Ellipse.Fill>
-								</Ellipse>
-							</Grid>
-							<Button.Flyout>
+							DisplayName="{Binding UserDisplayName}"
+							IsEnabled="{Binding IsSignedIn}"
+							ProfilePicture="{Binding UserProfilePicture}"
+							Tapped="ProfilePersonPicture_Tapped">
+							<FlyoutBase.AttachedFlyout>
 								<MenuFlyout Placement="BottomEdgeAlignedRight">
 									<MenuFlyoutItem IsEnabled="False" Text="{Binding UserDisplayName}" />
 									<MenuFlyoutSeparator />
@@ -104,8 +79,8 @@
 										</MenuFlyoutItem.Icon>
 									</MenuFlyoutItem>
 								</MenuFlyout>
-							</Button.Flyout>
-						</Button>
+							</FlyoutBase.AttachedFlyout>
+						</PersonPicture>
 					</Grid>
 
 					<!-- Source kind toggle: Screen / Window / Camera -->

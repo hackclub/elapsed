@@ -130,7 +130,7 @@
 						Grid.Row="2"
 						Margin="0,0,0,16"
 						SizeChanged="OnSourceScrollViewerSizeChanged">
-						<ItemsRepeater ItemsSource="{Binding CurrentSources}">
+						<ItemsRepeater IsHitTestVisible="{Binding IsSignedIn, Mode=OneWay}" ItemsSource="{Binding CurrentSources}">
 							<ItemsRepeater.Layout>
 								<UniformGridLayout
 									x:Name="SourceGridLayout"

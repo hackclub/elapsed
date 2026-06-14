@@ -30,10 +30,6 @@ public sealed partial class RecordingPage : Page
 			vm.RecordingStarted += OnRecordingStarted;
 			vm.RecordingStopped += OnRecordingStopped;
 			vm.FocusRequested += OnFocusRequested;
-
-			ScreenRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Screen;
-			WindowRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Window;
-			CameraRadio.Checked += (_, _) => vm.SelectedSourceKind = CaptureSourceKind.Camera;
 		}
 	}
 
@@ -134,6 +130,17 @@ public sealed partial class RecordingPage : Page
 		var scaledHeight = (int)(height * scale);
 
 		window.AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = scaledWidth, Height = scaledHeight });
+	}
+
+	private void OnSourceKindSelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (DataContext is not RecordingViewModel vm) return;
+		vm.SelectedSourceKind = SourceKindSegmented.SelectedIndex switch
+		{
+			1 => CaptureSourceKind.Window,
+			2 => CaptureSourceKind.Camera,
+			_ => CaptureSourceKind.Screen,
+		};
 	}
 
 	private void ProfilePersonPicture_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)

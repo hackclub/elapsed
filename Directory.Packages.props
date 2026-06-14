@@ -10,6 +10,7 @@
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageVersion Include="SkiaSharp.Skottie" Version="3.119.0" />
 		<PackageVersion Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
+		<PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
 		<PackageVersion Include="Riverside.CompilerPlatform.CSharp.Features.Kiota" Version="1.6.260314" />
 		<PackageVersion Include="System.Net.Http.Json" Version="10.0.4" />
 		<PackageVersion Include="System.Text.Json" Version="10.0.4" />

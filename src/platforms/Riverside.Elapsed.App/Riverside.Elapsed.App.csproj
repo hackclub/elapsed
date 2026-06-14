@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+<Project Sdk="Uno.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-desktop;net10.0-android;net10.0-ios</TargetFrameworks>
 		<!--<TargetFrameworks>$(TargetFrameworks);net10.0-browserwasm;net10.0-windows10.0.26100.0</TargetFrameworks>-->
@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<PackageReference Include="SkiaSharp.Skottie" />
 		<PackageReference Include="CommunityToolkit.WinUI.Converters" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
 	</ItemGroup>
 
 	<ItemGroup>

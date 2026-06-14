@@ -5,6 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:viewmodels="using:Riverside.Elapsed.App.ViewModels"
+	xmlns:wct="using:CommunityToolkit.WinUI.Controls"
 	d:DataContext="{d:DesignInstance Type=viewmodels:RecordingViewModel}"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	mc:Ignorable="d">
@@ -86,119 +87,103 @@
 					</Grid>
 
 					<!-- Source kind toggle: Screen / Window / Camera -->
-					<Grid
+					<wct:Segmented
+						x:Name="SourceKindSegmented"
 						Grid.Row="1"
-						Height="36"
 						Margin="0,0,0,12"
-						Background="{ThemeResource ControlFillColorSecondaryBrush}"
-						CornerRadius="8">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<RadioButton
-							x:Name="ScreenRadio"
-							Grid.Column="0"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							Content="Screen"
-							GroupName="SourceKind"
-							IsChecked="True"
-							Style="{StaticResource SegmentedToggleStyle}" />
-						<RadioButton
-							x:Name="WindowRadio"
-							Grid.Column="1"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							Content="Window"
-							GroupName="SourceKind"
-							Style="{StaticResource SegmentedToggleStyle}" />
-						<RadioButton
-							x:Name="CameraRadio"
-							Grid.Column="2"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Center"
-							Content="Camera"
-							GroupName="SourceKind"
-							Style="{StaticResource SegmentedToggleStyle}" />
-					</Grid>
+						HorizontalAlignment="Stretch"
+						SelectedIndex="0"
+						SelectionChanged="OnSourceKindSelectionChanged">
+						<wct:SegmentedItem Content="Screen" />
+						<wct:SegmentedItem Content="Window" />
+						<wct:SegmentedItem Content="Camera" />
+					</wct:Segmented>
 
 					<!-- Source grid -->
-					<ScrollViewer
-						x:Name="SourceScrollViewer"
-						Grid.Row="2"
-						Margin="0,0,0,16"
-						SizeChanged="OnSourceScrollViewerSizeChanged">
-						<ItemsRepeater IsHitTestVisible="{Binding IsSignedIn, Mode=OneWay}" ItemsSource="{Binding CurrentSources}">
-							<ItemsRepeater.Layout>
-								<UniformGridLayout
-									x:Name="SourceGridLayout"
-									MinColumnSpacing="6"
-									MinItemHeight="148"
-									MinItemWidth="158"
-									MinRowSpacing="6" />
-							</ItemsRepeater.Layout>
-							<ItemsRepeater.ItemTemplate>
-								<DataTemplate>
-									<Border
-										Background="{ThemeResource ControlFillColorDefaultBrush}"
-										BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-										BorderThickness="1"
-										CornerRadius="8"
-										PointerPressed="OnSourceCardPressed">
-										<Grid>
-											<Grid.RowDefinitions>
-												<RowDefinition Height="3*" />
-												<RowDefinition Height="Auto" />
-											</Grid.RowDefinitions>
-											<Border
-												Grid.Row="0"
-												Background="{ThemeResource ControlFillColorTertiaryBrush}"
-												CornerRadius="7,7,0,0">
-												<Image
-													HorizontalAlignment="Center"
-													VerticalAlignment="Center"
-													Source="{Binding Thumbnail}"
-													Stretch="UniformToFill" />
-											</Border>
-											<StackPanel
-												Grid.Row="1"
-												Padding="8,6,8,6"
-												Spacing="1">
-												<StackPanel Orientation="Horizontal" Spacing="4">
+					<Grid Grid.Row="2" Margin="0,0,0,16">
+						<ScrollViewer
+							x:Name="SourceScrollViewer"
+							SizeChanged="OnSourceScrollViewerSizeChanged"
+							Visibility="{Binding HasSources, Converter={StaticResource BoolToVisibilityConverter}}">
+							<ItemsRepeater IsHitTestVisible="{Binding IsSignedIn}" ItemsSource="{Binding CurrentSources}">
+								<ItemsRepeater.Layout>
+									<UniformGridLayout
+										x:Name="SourceGridLayout"
+										MinColumnSpacing="6"
+										MinItemHeight="148"
+										MinItemWidth="158"
+										MinRowSpacing="6" />
+								</ItemsRepeater.Layout>
+								<ItemsRepeater.ItemTemplate>
+									<DataTemplate>
+										<Border
+											Background="{ThemeResource ControlFillColorDefaultBrush}"
+											BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+											BorderThickness="1"
+											CornerRadius="8"
+											PointerPressed="OnSourceCardPressed">
+											<Grid>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="3*" />
+													<RowDefinition Height="Auto" />
+												</Grid.RowDefinitions>
+												<Border
+													Grid.Row="0"
+													Background="{ThemeResource ControlFillColorTertiaryBrush}"
+													CornerRadius="7,7,0,0">
 													<Image
-														Width="14"
-														Height="14"
+														HorizontalAlignment="Center"
 														VerticalAlignment="Center"
-														Source="{Binding Icon}"
-														Visibility="{Binding Icon, Converter={StaticResource NullToCollapsedConverter}}" />
+														Source="{Binding Thumbnail}"
+														Stretch="UniformToFill" />
+												</Border>
+												<StackPanel
+													Grid.Row="1"
+													Padding="8,6,8,6"
+													Spacing="1">
+													<StackPanel Orientation="Horizontal" Spacing="4">
+														<Image
+															Width="14"
+															Height="14"
+															VerticalAlignment="Center"
+															Source="{Binding Icon}"
+															Visibility="{Binding Icon, Converter={StaticResource NullToCollapsedConverter}}" />
+														<TextBlock
+															FontSize="11"
+															FontWeight="Bold"
+															MaxLines="1"
+															Text="{Binding Name}"
+															TextTrimming="CharacterEllipsis" />
+													</StackPanel>
 													<TextBlock
-														FontSize="11"
-														FontWeight="Bold"
+														FontSize="10"
+														Foreground="{ThemeResource TextFillColorSecondaryBrush}"
 														MaxLines="1"
-														Text="{Binding Name}"
-														TextTrimming="CharacterEllipsis" />
+														Text="{Binding Description}"
+														TextTrimming="CharacterEllipsis"
+														Visibility="{Binding Description, Converter={StaticResource NullToCollapsedConverter}}" />
+													<TextBlock
+														FontSize="10"
+														Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+														Text="{Binding Resolution}"
+														Visibility="{Binding Resolution, Converter={StaticResource NullToCollapsedConverter}}" />
 												</StackPanel>
-												<TextBlock
-													FontSize="10"
-													Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-													MaxLines="1"
-													Text="{Binding Description}"
-													TextTrimming="CharacterEllipsis"
-													Visibility="{Binding Description, Converter={StaticResource NullToCollapsedConverter}}" />
-												<TextBlock
-													FontSize="10"
-													Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-													Text="{Binding Resolution}"
-													Visibility="{Binding Resolution, Converter={StaticResource NullToCollapsedConverter}}" />
-											</StackPanel>
-										</Grid>
-									</Border>
-								</DataTemplate>
-							</ItemsRepeater.ItemTemplate>
-						</ItemsRepeater>
-					</ScrollViewer>
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</ItemsRepeater.ItemTemplate>
+							</ItemsRepeater>
+						</ScrollViewer>
+
+						<!-- Empty state -->
+						<TextBlock
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							FontSize="13"
+							Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+							Text="No sources available :("
+							Visibility="{Binding HasSources, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}" />
+					</Grid>
 
 					<!-- Sign in prompt (shown when not authenticated) -->
 					<Border

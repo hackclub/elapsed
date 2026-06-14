@@ -102,9 +102,13 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 		}
 
 		_ = InitializeAsync();
+
+		CurrentSources.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasSources));
 	}
 
 	public ObservableCollection<CaptureSource> CurrentSources { get; } = [];
+
+	public bool HasSources => CurrentSources.Count > 0;
 
 	public bool IsInSetup => Phase == RecordingPhase.Setup;
 

@@ -32,43 +32,43 @@ public sealed partial class RecordingViewModel : ObservableObject, IDisposable
 	public partial CaptureSource? SelectedSource { get; set; }
 
 	[ObservableProperty]
-	private partial RecordingPhase Phase { get; set; } = RecordingPhase.Setup;
+	public partial RecordingPhase Phase { get; set; } = RecordingPhase.Setup;
 
 	[ObservableProperty]
-	private partial string ElapsedDisplay { get; set; } = "00:00:00";
+	public partial string ElapsedDisplay { get; set; } = "00:00:00";
 
 	[ObservableProperty]
-	private partial string? StatusMessage { get; set; }
+	public partial string? StatusMessage { get; set; }
 
 	[ObservableProperty]
-	private partial ImageSource? PreviewImage { get; set; }
+	public partial ImageSource? PreviewImage { get; set; }
 
 	[ObservableProperty]
-	private partial double UploadProgress { get; set; }
+	public partial double UploadProgress { get; set; }
 
 	[ObservableProperty]
-	private partial string? UploadStatusText { get; set; }
+	public partial string? UploadStatusText { get; set; }
 
 	[ObservableProperty]
-	private partial string PublishTitle { get; set; } = "";
+	public partial string PublishTitle { get; set; } = "";
 
 	[ObservableProperty]
-	private partial string PublishDescription { get; set; } = "";
+	public partial string PublishDescription { get; set; } = "";
 
 	[ObservableProperty]
-	private partial int PublishVisibilityIndex { get; set; }
+	public partial int PublishVisibilityIndex { get; set; }
 
 	[ObservableProperty]
-	private partial bool IsSignedIn { get; set; }
+	public partial bool IsSignedIn { get; set; }
 
 	[ObservableProperty]
-	private partial string? UserDisplayName { get; set; }
+	public partial string? UserDisplayName { get; set; }
 
 	[ObservableProperty]
-	private partial string? UserHandle { get; set; }
+	public partial string? UserHandle { get; set; }
 
 	[ObservableProperty]
-	private partial ImageSource? UserProfilePicture { get; set; }
+	public partial ImageSource? UserProfilePicture { get; set; }
 
 	public RecordingViewModel(IRecordingFacade recording, ICaptureSourceProvider sourceProvider, LapseService lapse)
 	{

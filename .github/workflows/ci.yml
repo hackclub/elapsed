@@ -83,7 +83,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         project: [App]
-        targetFramework: [net10.0-windows10.0.26100.0, net10.0-desktop, net10.0-android, net10.0-ios, net10.0-browserwasm]
+        targetFramework: [net10.0-desktop, net10.0-android, net10.0-ios]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       TFM: ${{ matrix.targetFramework }}

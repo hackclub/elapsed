@@ -466,42 +466,42 @@ jobs:
           }
           dotnet nuget push $artifact --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
 
-  publish-web:
-    if: |
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      needs.evaluate.outputs.version_bumped == 'true'
-    needs: [evaluate, app]
-    runs-on: windows-latest
-    environment:
-      name: Web
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      ID: runtime.any.App.net10.0-browserwasm.Environment-Release
-
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: ${{ env.ID }}
-          path: ${{ github.workspace }}\elapsed
-
-      - name: Publish release to web
-        shell: pwsh
-        run: |
-          cd ".\elapsed"
-          vercel pull --yes --prod --token=${{ secrets.VERCEL_TOKEN }}
-          vercel build --yes --prod --token=${{ secrets.VERCEL_TOKEN }}
-          vercel deploy --yes --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+#  publish-web:
+#    if: |
+#      github.event_name == 'push' &&
+#      github.ref == 'refs/heads/main' &&
+#      needs.evaluate.outputs.version_bumped == 'true'
+#    needs: [evaluate, app]
+#    runs-on: windows-latest
+#    environment:
+#      name: Web
+#    env:
+#      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+#      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+#      ID: runtime.any.App.net10.0-browserwasm.Environment-Release
+#
+#    steps:
+#      - name: Checkout the repository
+#        uses: actions/checkout@v6
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Install Vercel CLI
+#        run: npm install --global vercel@latest
+#
+#      - name: Download artifacts
+#        uses: actions/download-artifact@v8
+#        with:
+#          name: ${{ env.ID }}
+#          path: ${{ github.workspace }}\elapsed
+#
+#      - name: Publish release to web
+#        shell: pwsh
+#        run: |
+#          cd ".\elapsed"
+#          vercel pull --yes --prod --token=${{ secrets.VERCEL_TOKEN }}
+#          vercel build --yes --prod --token=${{ secrets.VERCEL_TOKEN }}
+#          vercel deploy --yes --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
 #  publish-marketplaces:
 #    if: |
